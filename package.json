@@ -1,0 +1,22 @@
+{
+  "name": "acuuy-cctv-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistem Terintegrasi Acuuy CCTV: Web Publik (landing-it) dan Admin Operations (dashboard-it)",
+  "scripts": {
+    "dev:landing": "npm --prefix landing-it run dev",
+    "dev:dashboard": "npm --prefix dashboard-it run dev",
+    "build:landing": "npm --prefix landing-it run build",
+    "build:dashboard": "npm --prefix dashboard-it run build",
+    "build:all": "npm run build:landing && npm run build:dashboard"
+  },
+  "keywords": [
+    "cctv",
+    "komputer",
+    "laptop-bekas",
+    "garut",
+    "nextjs"
+  ],
+  "author": "Acuuy CCTV",
+  "license": "ISC"
+}

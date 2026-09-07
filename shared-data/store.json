@@ -1,0 +1,378 @@
+{
+  "settings": {
+    "id": "default",
+    "store_name": "Acuuy CCTV & Komputer Garut",
+    "tagline": "Pusat Instalasi CCTV, Servis Komputer Cepat & Jual Beli Laptop Bekas Bergaransi di Garut",
+    "whatsapp_number": "6285797987872",
+    "email": "admin@acuuycctv.com",
+    "address_street": "Jl. Cimanuk No. 88, Tarogong Kidul, Garut (Dekat Simpang Lima)",
+    "city": "Kabupaten Garut",
+    "province": "Jawa Barat",
+    "postal_code": "44151",
+    "google_maps_url": "https://maps.google.com/?q=Tarogong+Kidul+Garut",
+    "opening_hours": "Senin - Sabtu: 08:30 - 18:00 WIB (Minggu Libur)"
+  },
+  "technicians": [
+    {
+      "id": "tech-1",
+      "name": "Kang Asep Supriatna",
+      "phone": "081223344551",
+      "specialization": "Instalasi & Maintenance CCTV",
+      "status": "active"
+    },
+    {
+      "id": "tech-2",
+      "name": "Rian Hidayat",
+      "phone": "081223344552",
+      "specialization": "Hardware, Servis Motherboard & Laptop",
+      "status": "active"
+    },
+    {
+      "id": "tech-3",
+      "name": "Deden Kurnia",
+      "phone": "081223344553",
+      "specialization": "Jaringan, Mikrotik & Konsultasi IT Kantor",
+      "status": "active"
+    }
+  ],
+  "laptops": [
+    {
+      "id": "lap-1",
+      "slug": "lenovo-thinkpad-t480-i5-8350u",
+      "title": "Lenovo ThinkPad T480 Bisnis Tangguh",
+      "brand": "Lenovo",
+      "model": "ThinkPad T480",
+      "processor": "Intel Core i5-8350U vPro (4 Cores, 8 Threads)",
+      "ram": "16GB DDR4 Dual Channel",
+      "storage": "512GB M.2 NVMe SSD",
+      "graphics": "Intel UHD Graphics 620",
+      "display": "14 Inch FHD (1920x1080) IPS Anti-Glare",
+      "battery_health": "Dual Baterai Sehat 90%+ (Tahan 4-5 Jam)",
+      "condition_grade": "Grade A (Mulus)",
+      "price": 3850000,
+      "discount_price": 3650000,
+      "warranty_info": "Garansi Toko 1 Bulan Full Replace Part",
+      "status": "tersedia",
+      "images": [
+        "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Laptop bisnis legendaris bodi tangguh standar militer MIL-STD, keyboard empuk sangat nyaman untuk ketik skripsi/coding, port lengkap dengan Thunderbolt 3.",
+      "features": [
+        "Keyboard Empuk & Tahan Tumpahan Air",
+        "Dual Baterai Awet 4-5 Jam",
+        "Port Lengkap Type-C / Thunderbolt 3",
+        "Windows 11 Pro Original Aktif"
+      ]
+    },
+    {
+      "id": "lap-2",
+      "slug": "asus-tuf-gaming-f15-gtx1650",
+      "title": "ASUS TUF Gaming F15 Layar 144Hz Mulus",
+      "brand": "Asus",
+      "model": "TUF Gaming F15 FX506LH",
+      "processor": "Intel Core i5-10300H (Max 4.5GHz)",
+      "ram": "16GB DDR4 3200MHz",
+      "storage": "512GB NVMe PCIe SSD (+ Free Slot HDD)",
+      "graphics": "NVIDIA GeForce GTX 1650 4GB GDDR6",
+      "display": "15.6 Inch Full HD IPS 144Hz Smooth Display",
+      "battery_health": "Baterai Normal 2.5-3 Jam Pemakaian Standar",
+      "condition_grade": "Grade A (Mulus)",
+      "price": 7200000,
+      "discount_price": 6900000,
+      "warranty_info": "Garansi Toko 1 Bulan + Free Request Game & Software",
+      "status": "tersedia",
+      "images": [
+        "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Laptop gaming performa tinggi siap libas Valorant, GTA V, Dota 2, PES, dan editing video Adobe Premiere / CapCut. Suhu dingin, kipas bersih, pasta pendingin Arctic baru diganti.",
+      "features": [
+        "Layar 144Hz Refresh Rate Mulus",
+        "Dual Fan Cooling System Dingin",
+        "RGB Backlight Keyboard",
+        "Kondisi 96% Sangat Terawat"
+      ]
+    },
+    {
+      "id": "lap-3",
+      "slug": "dell-latitude-7490-slim-core-i7",
+      "title": "Dell Latitude 7490 Slim Ultrabook Carbon",
+      "brand": "Dell",
+      "model": "Latitude 7490",
+      "processor": "Intel Core i7-8650U (Max 4.2GHz)",
+      "ram": "16GB DDR4",
+      "storage": "256GB M.2 NVMe SSD Fast Boot",
+      "graphics": "Intel UHD Graphics 620",
+      "display": "14 Inch FHD (1920x1080) Matte",
+      "battery_health": "Baterai 3-4 Jam Normal",
+      "condition_grade": "Grade A (Mulus)",
+      "price": 4250000,
+      "discount_price": null,
+      "warranty_info": "Garansi Toko 1 Bulan",
+      "status": "tersedia",
+      "images": [
+        "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Ultrabook premium dengan bodi magnesium alloy karbon, enteng hanya 1.3kg enak dibawa mobile, performa gesit dengan prosesor Core i7.",
+      "features": [
+        "Bodi Ringan 1.3kg Slim",
+        "Keyboard Backlight Nyala",
+        "Sensor Sidik Jari & Windows Hello",
+        "Kualitas Speaker Jernih"
+      ]
+    },
+    {
+      "id": "lap-4",
+      "slug": "hp-14s-ryzen-3-ram-8gb",
+      "title": "HP 14s Slim Murah Mahasiswa & Pelajar",
+      "brand": "HP",
+      "model": "14s-dk0023AU",
+      "processor": "AMD Ryzen 3 3200U with Radeon Vega 3",
+      "ram": "8GB DDR4",
+      "storage": "256GB PCIe NVMe SSD",
+      "graphics": "AMD Radeon Vega 3 Graphics",
+      "display": "14 Inch HD BrightView Micro-Edge",
+      "battery_health": "Baterai Tahan 3-4 Jam",
+      "condition_grade": "Grade B (Lecet Pemakaian)",
+      "price": 2850000,
+      "discount_price": 2700000,
+      "warranty_info": "Garansi Toko 1 Bulan",
+      "status": "tersedia",
+      "images": [
+        "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Solusi laptop hemat budget untuk tugas sekolah, kuliah, skripsi, dan kasir toko. Bezel tipis modern, enteng, SSD bikin booting cuma hitungan detik.",
+      "features": [
+        "Bezel Layar Tipis Modern",
+        "SSD Bikin Performa Ngebut",
+        "Include Windows 11 & Office 2021",
+        "Harga Paling Terjangkau"
+      ]
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-1",
+      "order_number": "ACY-CCTV-260907-001",
+      "service_type": "cctv",
+      "customer_name": "Bpk. H. Rahmat Kurnia",
+      "customer_phone": "081394882211",
+      "customer_email": "rahmatk@gmail.com",
+      "address": "Jl. Otista No. 45, Tarogong Kaler, Garut",
+      "city": "Garut",
+      "description": "Pemasangan paket 4 kamera CCTV IP 4MP untuk pengawasan toko kelontong & area parkir.",
+      "specific_details": {
+        "camera_count": 4,
+        "property_type": "Toko / Ruko",
+        "storage_size": "1TB",
+        "include_audio": true
+      },
+      "status": "dijadwalkan",
+      "estimated_cost": 3450000,
+      "final_cost": 0,
+      "technician_id": "tech-1",
+      "technician_name": "Kang Asep Supriatna",
+      "admin_notes": "Jadwal survei & penarikan kabel Selasa pukul 09.00 WIB.",
+      "created_at": "2026-09-07T08:30:00.000Z",
+      "updated_at": "2026-09-07T09:15:00.000Z",
+      "status_logs": [
+        {
+          "status": "baru",
+          "time": "2026-09-07T08:30:00.000Z",
+          "notes": "Pengajuan survei CCTV diterima via website"
+        },
+        {
+          "status": "dikonfirmasi",
+          "time": "2026-09-07T09:00:00.000Z",
+          "notes": "Admin mengonfirmasi kebutuhan via WhatsApp"
+        },
+        {
+          "status": "dijadwalkan",
+          "time": "2026-09-07T09:15:00.000Z",
+          "notes": "Teknisi Kang Asep ditugaskan ke lokasi"
+        }
+      ]
+    },
+    {
+      "id": "ord-2",
+      "order_number": "ACY-SRV-260907-002",
+      "service_type": "servis_komputer",
+      "customer_name": "Ibu Siti Nurhaliza",
+      "customer_phone": "085220119933",
+      "customer_email": "sitinur@yahoo.com",
+      "address": "Perum Cempaka Indah Blok D-12, Karangpawitan, Garut",
+      "city": "Garut",
+      "description": "Laptop Lenovo Ideapad lambat sekali dan kipas berbunyi kasar panas mati mendadak saat dipakai Zoom.",
+      "specific_details": {
+        "laptop_model": "Lenovo Ideapad 320",
+        "complaint": "Overheat & Lemot",
+        "request_upgrade": "Ganti SSD 256GB & Ganti Thermal Paste"
+      },
+      "status": "dikerjakan",
+      "estimated_cost": 480000,
+      "final_cost": 0,
+      "technician_id": "tech-2",
+      "technician_name": "Rian Hidayat",
+      "admin_notes": "Sudah dibongkar, kipas dibersihkan, proses kloning data ke SSD 256GB baru.",
+      "created_at": "2026-09-07T09:45:00.000Z",
+      "updated_at": "2026-09-07T11:20:00.000Z",
+      "status_logs": [
+        {
+          "status": "baru",
+          "time": "2026-09-07T09:45:00.000Z",
+          "notes": "Keluhan servis didaftarkan"
+        },
+        {
+          "status": "dikonfirmasi",
+          "time": "2026-09-07T10:10:00.000Z",
+          "notes": "Unit diserahkan ke workshop toko"
+        },
+        {
+          "status": "dikerjakan",
+          "time": "2026-09-07T11:20:00.000Z",
+          "notes": "Pembersihan motherboard & pemasangan SSD baru"
+        }
+      ]
+    },
+    {
+      "id": "ord-3",
+      "order_number": "ACY-CON-260907-003",
+      "service_type": "konsultasi_it",
+      "customer_name": "Klinik Sehat Medika Garut",
+      "customer_phone": "082119884400",
+      "customer_email": "kontak@kliniksehat.co.id",
+      "address": "Jl. Patriot No. 10, Garut",
+      "city": "Garut",
+      "description": "Perancangan jaringan LAN antarlantai dan setup file server lokal untuk sinkronisasi database rekam medis klinik.",
+      "specific_details": {
+        "institution_type": "Klinik Kesehatan",
+        "device_count": 15,
+        "priority": "Keamanan Data Rekam Medis"
+      },
+      "status": "baru",
+      "estimated_cost": 1500000,
+      "final_cost": 0,
+      "technician_id": "tech-3",
+      "technician_name": "Deden Kurnia",
+      "admin_notes": "Perlu follow up jadwal temu dengan direktur klinik.",
+      "created_at": "2026-09-07T11:50:00.000Z",
+      "updated_at": "2026-09-07T11:50:00.000Z",
+      "status_logs": [
+        {
+          "status": "baru",
+          "time": "2026-09-07T11:50:00.000Z",
+          "notes": "Permintaan konsultasi IT diajukan melalui website"
+        }
+      ]
+    }
+  ],
+  "submissions": [
+    {
+      "id": "sub-1",
+      "submission_number": "SELL-260907-001",
+      "customer_name": "Fajar Permana",
+      "customer_phone": "089678112233",
+      "brand": "Acer",
+      "model": "Aspire 3 A314-22",
+      "specifications": "Core i3 Gen 10, RAM 4GB DDR4, HDD 1TB",
+      "condition_description": "Bodi 90% mulus ada gores halus di cover, baterai awet 2 jam, kelengkapan unit dan charger original.",
+      "expected_price": 2100000,
+      "offered_price": 1800000,
+      "status": "menunggu_review",
+      "admin_notes": "Bisa ditawar 1.8jt karena butuh upgrade SSD & RAM 4GB lagi sebelum dijual.",
+      "created_at": "2026-09-07T10:30:00.000Z",
+      "updated_at": "2026-09-07T10:30:00.000Z"
+    }
+  ],
+  "portfolios": [
+    {
+      "id": "port-1",
+      "title": "Pemasangan Paket 8 Kamera IP ColorVu di Minimarket Berkah Jaya",
+      "category": "toko",
+      "location": "Tarogong Kidul, Garut",
+      "camera_count": 8,
+      "camera_type": "IP Camera 4MP ColorVu + Audio (24 Jam Berwarna)",
+      "completion_date": "2026-08-25",
+      "images": [
+        "https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Pemasangan 8 titik kamera pengawas untuk area lorong kasir, rak sembako, dan parkir depan. Tarikan kabel conduit PVC rapi tanpa merusak plafon toko.",
+      "testimonial": {
+        "client_name": "Bpk. H. Rahmat",
+        "review": "Instalasi sangat rapi, teknisi Kang Asep teliti dan ramah. Hasil rekaman malam hari di kasir terang benderang.",
+        "rating": 5
+      }
+    },
+    {
+      "id": "port-2",
+      "title": "Sistem Keamanan 4 Titik CCTV di Rumah Tinggal Mewah",
+      "category": "rumah",
+      "location": "Perumahan Cempaka Indah, Garut",
+      "camera_count": 4,
+      "camera_type": "Dome & Bullet 3MP Smart Hybrid Light",
+      "completion_date": "2026-08-18",
+      "images": [
+        "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Pengamanan area gerbang masuk, carport mobil, taman samping, dan teras belakang. Integrasi langsung ke HP iPhone pemilik rumah untuk monitoring saat bepergian ke luar kota.",
+      "testimonial": {
+        "client_name": "Ibu Maya Susanti",
+        "review": "Sangat praktis bisa saya pantau dari Jakarta saat rumah kosong. Setting aplikasinya dibantu sampai lancar.",
+        "rating": 5
+      }
+    },
+    {
+      "id": "port-3",
+      "title": "Pemasangan CCTV & Jaringan LAN di Klinik Kesehatan Sehat Medika",
+      "category": "kantor",
+      "location": "Jl. Patriot, Garut Kota",
+      "camera_count": 12,
+      "camera_type": "IP PoE 4MP Ultra Low-Light Surveillance",
+      "completion_date": "2026-08-05",
+      "images": [
+        "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Pengawasan ruang pendaftaran pasien, apotek, koridor poli dokter, dan area farmasi obat. Manajemen kabel terpusat di server rack lantai 2.",
+      "testimonial": {
+        "client_name": "dr. Kurnia Hidayat",
+        "review": "Sangat profesional. Dikerjakan di luar jam operasional klinik sehingga tidak mengganggu pasien berobat.",
+        "rating": 5
+      }
+    },
+    {
+      "id": "port-4",
+      "title": "Instalasi 16 Kamera Outdoor & Indoor di Gudang Distribusi Garut",
+      "category": "gudang",
+      "location": "Jl. Raya Garut - Bandung, Kadungora",
+      "camera_count": 16,
+      "camera_type": "PTZ 360 & Bullet Long Range Night Vision",
+      "completion_date": "2026-07-29",
+      "images": [
+        "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Pengawasan area loading dock bongkar muat barang ekspedisi, gerbang truk, dan rak pergudangan lantai 1 & 2. Menggunakan NVR enterprise 16 Channel.",
+      "testimonial": {
+        "client_name": "Bpk. Dedi Supriyadi (Kepala Gudang)",
+        "review": "Area blind-spot sekarang terpantau jelas. Kamera PTZ bisa zoom nomor plat truk yang masuk.",
+        "rating": 5
+      }
+    },
+    {
+      "id": "port-5",
+      "title": "Instalasi CCTV & Wi-Fi Management di Kafe Kopi Khas Garut",
+      "category": "toko",
+      "location": "Samarang, Garut",
+      "camera_count": 6,
+      "camera_type": "Full HD 2MP Audio Recording & ColorVu",
+      "completion_date": "2026-07-15",
+      "images": [
+        "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&auto=format&fit=crop&q=80"
+      ],
+      "description": "Penataan kamera estetik menyesuaikan dekorasi industrial kafe. Dilengkapi mikrofon untuk memantau kasir dan area outdoor barista.",
+      "testimonial": {
+        "client_name": "Kang Farhan (Owner)",
+        "review": "Penempatan kamera tidak merusak estetika kafe. Hasil audio jelas dan kabel sangat rapi.",
+        "rating": 5
+      }
+    }
+  ]
+}
