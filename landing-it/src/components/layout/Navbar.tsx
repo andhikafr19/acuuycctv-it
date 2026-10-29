@@ -20,6 +20,7 @@ import {
 import { StoreSettings } from '@/lib/types';
 import { getStoreSettings } from '@/lib/store';
 import { formatWaPhone } from '@/lib/whatsapp';
+import { BUSINESS } from '@/lib/business';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -63,7 +64,7 @@ export default function Navbar() {
     { name: 'Kontak & Lokasi', href: '/kontak' },
   ];
 
-  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : '6285223344556';
+  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all">
@@ -75,7 +76,7 @@ export default function Navbar() {
               <ShieldCheck className="w-3.5 h-3.5" /> Garansi Resmi Toko & Teknisi Berpengalaman
             </span>
             <span className="text-slate-500">|</span>
-            <span>📍 Workshop: Tarogong Kidul, Garut</span>
+            <span>📍 Workshop: {BUSINESS.shortAddress}</span>
           </div>
           <div className="flex items-center gap-4">
             <span>🕒 {settings?.opening_hours || 'Senin - Sabtu: 08:30 - 18:00 WIB'}</span>

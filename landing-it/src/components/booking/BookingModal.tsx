@@ -210,7 +210,7 @@ export default function BookingModal({
 
               <div className="flex flex-col gap-3 pt-2">
                 <a
-                  href={`https://wa.me/6285223344556?text=${encodeURIComponent(
+                  href={`https://wa.me/6285158722545?text=${encodeURIComponent(
                     `Halo Admin Acuuy CCTV Garut, saya sudah submit pesanan dengan No. Order: ${submittedOrder.order_number}. Mohon konfirmasinya ya. Terima kasih!`
                   )}`}
                   target="_blank"

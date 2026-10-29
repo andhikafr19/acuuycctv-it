@@ -95,7 +95,7 @@ export default function ServisPage() {
                 <Sparkles className="w-4 h-4" /> Ajukan Servis Sekarang
               </button>
               <a
-                href="https://wa.me/6285223344556?text=Halo%20Acuuy%20CCTV,%20laptop%20saya%20rusak%20mau%20konsultasi%20biaya%20servis"
+                href="https://wa.me/6285158722545?text=Halo%20Acuuy%20CCTV,%20laptop%20saya%20rusak%20mau%20konsultasi%20biaya%20servis"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm border border-slate-700 active:scale-95 transition-all flex items-center gap-2"

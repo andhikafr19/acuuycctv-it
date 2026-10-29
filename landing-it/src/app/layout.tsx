@@ -3,13 +3,14 @@ import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import WhatsAppFloating from '@/components/layout/WhatsAppFloating';
+import { BUSINESS, waLink } from '@/lib/business';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://acuuycctv-it.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Acuuy CCTV & Servis Komputer Garut | Solusi CCTV, Laptop & IT',
+    default: 'Jasa Pasang & Instalasi CCTV Garut | Acuuy CCTV & Servis Laptop',
     template: '%s | Acuuy CCTV Garut',
   },
   description:
@@ -88,34 +89,31 @@ export const metadata: Metadata = {
 
 const localBusinessSchema = {
   '@context': 'https://schema.org',
-  '@type': 'HomeAndConstructionBusiness',
-  name: 'Acuuy CCTV & Servis Komputer Garut',
-  alternateName: 'Acuuy CCTV',
+  '@type': ['LocalBusiness', 'HomeAndConstructionBusiness'],
+  '@id': `${siteUrl}/#business`,
+  name: BUSINESS.name,
+  alternateName: ['Acuuy CCTV', BUSINESS.legalName],
   description:
-    'Layanan spesialis pemasangan kamera CCTV bergaransi, servis laptop & komputer cepat, jual beli laptop bekas, dan konsultasi IT di Garut, Jawa Barat.',
+    'Jasa pasang & instalasi CCTV bergaransi di Garut, servis laptop & komputer, jual beli laptop bekas, dan konsultasi IT. Lokasi di Jl. Dayeuhandap No.35, Garut Kota.',
   url: siteUrl,
   image: `${siteUrl}/og-image.jpg`,
-  telephone: '+6285223344556',
+  telephone: `+${BUSINESS.phone}`,
   priceRange: '$$',
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'Garut Kota',
-    addressLocality: 'Garut',
-    addressRegion: 'Jawa Barat',
-    postalCode: '44111',
+    streetAddress: BUSINESS.streetAddress,
+    addressLocality: BUSINESS.district,
+    addressRegion: BUSINESS.province,
+    postalCode: BUSINESS.postalCode,
     addressCountry: 'ID',
   },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: -7.2278,
-    longitude: 107.9087,
-  },
+  hasMap: BUSINESS.mapsUrl,
   openingHoursSpecification: [
     {
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-      opens: '08:00',
-      closes: '17:00',
+      opens: '08:30',
+      closes: '18:00',
     },
   ],
   areaServed: [
@@ -143,8 +141,26 @@ const localBusinessSchema = {
       '@type': 'City',
       name: 'Samarang',
     },
+    {
+      '@type': 'City',
+      name: 'Karangpawitan',
+    },
+    {
+      '@type': 'City',
+      name: 'Banyuresmi',
+    },
   ],
-  sameAs: ['https://wa.me/6285223344556'],
+  makesOffer: {
+    '@type': 'Offer',
+    itemOffered: {
+      '@type': 'Service',
+      name: 'Jasa Pasang & Instalasi CCTV Garut',
+      serviceType: 'Instalasi CCTV',
+      url: `${siteUrl}/cctv`,
+    },
+  },
+  // TODO: tambahkan link profil Google Maps (share link), Instagram, Facebook, TikTok di sini
+  sameAs: [waLink()],
 };
 
 export default function RootLayout({

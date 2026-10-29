@@ -14,6 +14,7 @@ import {
 import { StoreSettings } from '@/lib/types';
 import { getStoreSettings } from '@/lib/store';
 import { formatWaPhone } from '@/lib/whatsapp';
+import { BUSINESS } from '@/lib/business';
 
 export default function KontakPage() {
   const [settings, setSettings] = useState<StoreSettings | null>(null);
@@ -22,9 +23,9 @@ export default function KontakPage() {
     getStoreSettings().then(setSettings);
   }, []);
 
-  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : '6285223344556';
+  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
   const address =
-    settings?.address_street || 'Jl. Cimanuk No. 88, Tarogong Kidul, Garut (Dekat Simpang Lima)';
+    settings?.address_street || `${BUSINESS.streetAddress}, Kec. ${BUSINESS.district}`;
   const city = settings?.city || 'Kabupaten Garut';
   const hours = settings?.opening_hours || 'Senin - Sabtu: 08:30 - 18:00 WIB (Minggu Libur)';
 
@@ -135,11 +136,11 @@ export default function KontakPage() {
               <div>
                 <h3 className="text-lg font-black text-slate-900">Peta Lokasi Workshop</h3>
                 <p className="text-xs text-slate-500">
-                  Tarogong Kidul, Kabupaten Garut, Jawa Barat
+                  {BUSINESS.fullAddress}
                 </p>
               </div>
               <a
-                href={settings?.google_maps_url || 'https://maps.google.com/?q=Garut'}
+                href={settings?.google_maps_url || BUSINESS.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs font-bold text-teal-700 hover:text-teal-900 flex items-center gap-1 bg-teal-50 px-3 py-1.5 rounded-xl border border-teal-200"
@@ -152,7 +153,7 @@ export default function KontakPage() {
             <div className="w-full h-96 rounded-2xl overflow-hidden border border-slate-200 relative bg-slate-100">
               <iframe
                 title="Peta Lokasi Acuuy CCTV Garut"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d126685.25368555812!2d107.82869408018698!3d-7.218880629706306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68b1c4e78db09d%3A0xb5b4dfcb0b0be4b2!2sGarut%2C%20Garut%20Regency%2C%20West%20Java!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid"
+                src={BUSINESS.mapsEmbedUrl}
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}

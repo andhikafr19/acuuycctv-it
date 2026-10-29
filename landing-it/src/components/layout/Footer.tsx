@@ -19,6 +19,7 @@ import {
 import { StoreSettings } from '@/lib/types';
 import { getStoreSettings } from '@/lib/store';
 import { formatWaPhone } from '@/lib/whatsapp';
+import { BUSINESS } from '@/lib/business';
 
 export default function Footer() {
   const [settings, setSettings] = useState<StoreSettings | null>(null);
@@ -27,8 +28,8 @@ export default function Footer() {
     getStoreSettings().then(setSettings);
   }, []);
 
-  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : '6285223344556';
-  const address = settings?.address_street || 'Jl. Cimanuk No. 88, Tarogong Kidul, Garut';
+  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
+  const address = settings?.address_street || `${BUSINESS.streetAddress}, Kec. ${BUSINESS.district}`;
   const city = settings?.city || 'Kabupaten Garut';
   const hours = settings?.opening_hours || 'Senin - Sabtu: 08:30 - 18:00 WIB';
 

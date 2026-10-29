@@ -1,4 +1,5 @@
 import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio } from './types';
+import { BUSINESS } from './business';
 
 export async function getStoreAll(): Promise<{
   settings: StoreSettings;
@@ -20,14 +21,14 @@ export async function getStoreAll(): Promise<{
         id: 'default',
         store_name: 'Acuuy CCTV & Komputer Garut',
         tagline: 'Pusat Instalasi CCTV, Servis Komputer & Jual Beli Laptop Bekas Bergaransi di Garut',
-        whatsapp_number: '6285223344556',
+        whatsapp_number: BUSINESS.phone,
         email: 'admin@acuuycctv.com',
-        address_street: 'Jl. Cimanuk No. 88, Tarogong Kidul, Garut',
-        city: 'Garut',
-        province: 'Jawa Barat',
-        postal_code: '44151',
-        google_maps_url: 'https://maps.google.com/?q=Tarogong+Kidul+Garut',
-        opening_hours: 'Senin - Sabtu: 08:30 - 18:00 WIB',
+        address_street: BUSINESS.streetAddress + ', Kec. ' + BUSINESS.district,
+        city: BUSINESS.city,
+        province: BUSINESS.province,
+        postal_code: BUSINESS.postalCode,
+        google_maps_url: BUSINESS.mapsUrl,
+        opening_hours: BUSINESS.openingHours,
       },
       technicians: [],
       laptops: [],
@@ -71,14 +72,14 @@ export async function getStoreSettings(): Promise<StoreSettings> {
       id: 'default',
       store_name: 'Acuuy CCTV & Komputer Garut',
       tagline: 'Solusi Cepat CCTV & IT Garut',
-      whatsapp_number: '6285223344556',
+      whatsapp_number: BUSINESS.phone,
       email: 'admin@acuuycctv.com',
-      address_street: 'Jl. Cimanuk No. 88, Garut',
-      city: 'Garut',
-      province: 'Jawa Barat',
-      postal_code: '44151',
-      google_maps_url: 'https://maps.google.com/?q=Garut',
-      opening_hours: '08:30 - 18:00 WIB',
+      address_street: BUSINESS.streetAddress + ', Kec. ' + BUSINESS.district,
+      city: BUSINESS.city,
+      province: BUSINESS.province,
+      postal_code: BUSINESS.postalCode,
+      google_maps_url: BUSINESS.mapsUrl,
+      opening_hours: BUSINESS.openingHours,
     };
   }
 }

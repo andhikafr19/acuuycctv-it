@@ -23,6 +23,7 @@ import {
 import { StoreSettings, Laptop, ServiceType, Portfolio } from '@/lib/types';
 import { getStoreAll } from '@/lib/store';
 import { formatWaPhone } from '@/lib/whatsapp';
+import { BUSINESS } from '@/lib/business';
 import BookingModal from '@/components/booking/BookingModal';
 import LaptopCard from '@/components/laptop/LaptopCard';
 import LaptopDetailModal from '@/components/laptop/LaptopDetailModal';
@@ -49,7 +50,7 @@ export default function HomePage() {
     setBookingModalOpen(true);
   };
 
-  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : '6285223344556';
+  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
 
   return (
     <div className="space-y-20 pb-20">
@@ -70,16 +71,16 @@ export default function HomePage() {
               </div>
 
               <h1 className="text-3xl sm:text-5xl xl:text-6xl font-black tracking-tight leading-[1.15]">
-                Keamanan Rumah & Bisnis Maksimal,{' '}
+                Jasa Pasang CCTV Garut,{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-teal-300 to-emerald-400">
-                  Perangkat Selalu Prima.
+                  Rapi & Bergaransi.
                 </span>
               </h1>
 
               <p className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
-                Pusat layanan resmi <strong>Acuuy CCTV</strong> di Garut. Melayani instalasi kamera
-                CCTV berkualitas tinggi, servis komputer & laptop bergaransi, jual-beli laptop bekas
-                mulus, dan konsultasi jaringan IT kantor Anda.
+                Pusat layanan resmi <strong>Acuuy CCTV</strong> di Garut Kota. Melayani jasa
+                instalasi kamera CCTV untuk rumah, toko & kantor, servis komputer & laptop
+                bergaransi, jual-beli laptop bekas mulus, dan konsultasi jaringan IT kantor Anda.
               </p>
 
               {/* Action Buttons */}
@@ -144,7 +145,7 @@ export default function HomePage() {
                       Layanan Siap Panggil Garut
                     </span>
                   </div>
-                  <span className="text-xs font-medium text-slate-400">Tarogong Kidul</span>
+                  <span className="text-xs font-medium text-slate-400">Garut Kota</span>
                 </div>
 
                 {/* 4 Feature Rows */}
@@ -232,7 +233,7 @@ export default function HomePage() {
                 <Camera className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-black text-slate-900 group-hover:text-teal-700 transition-colors">
-                Instalasi CCTV
+                Jasa Pasang CCTV Garut
               </h3>
               <p className="text-xs text-slate-600 mt-2 leading-relaxed">
                 Pemasangan kamera CCTV indoor/outdoor untuk rumah, toko kelontong, ruko, gudang,
@@ -592,7 +593,7 @@ export default function HomePage() {
                 </div>
                 <h4 className="text-base font-bold text-white">Workshop Fisik di Garut</h4>
                 <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                  Memiliki toko fisik resmi di Tarogong Kidul, Garut. Mudah dikunjungi untuk cek unit
+                  Memiliki toko fisik resmi di Jl. Dayeuhandap No.35, Garut Kota. Mudah dikunjungi untuk cek unit
                   laptop langsung atau serah-terima perbaikan.
                 </p>
               </div>

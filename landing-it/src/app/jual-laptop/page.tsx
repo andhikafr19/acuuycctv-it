@@ -123,7 +123,7 @@ export default function JualLaptopPage() {
 
                 <div className="pt-2">
                   <a
-                    href={`https://wa.me/6285223344556?text=${encodeURIComponent(
+                    href={`https://wa.me/6285158722545?text=${encodeURIComponent(
                       `Halo Admin Acuuy CCTV, saya baru saja mengajukan jual laptop (${submittedData.submission_number}): ${submittedData.brand} ${submittedData.model} ekspektasi Rp ${Number(
                         submittedData.expected_price
                       ).toLocaleString('id-ID')}. Mohon info penaksirannya ya!`
@@ -297,7 +297,7 @@ export default function JualLaptopPage() {
               </span>
               <h3 className="text-xl font-black">Proses Cepat, Tanpa Ribet COD Jalanan</h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Jual langsung ke toko fisik kami di Tarogong Kidul, Garut. Dites bersama, harga
+                Jual langsung ke toko fisik kami di Jl. Dayeuhandap No.35, Garut Kota. Dites bersama, harga
                 disepakati, dan uang langsung cair hari itu juga.
               </p>
 

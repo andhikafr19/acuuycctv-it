@@ -5,6 +5,7 @@ import { MessageCircle, X } from 'lucide-react';
 import { StoreSettings } from '@/lib/types';
 import { getStoreSettings } from '@/lib/store';
 import { formatWaPhone } from '@/lib/whatsapp';
+import { BUSINESS } from '@/lib/business';
 
 export default function WhatsAppFloating() {
   const [settings, setSettings] = useState<StoreSettings | null>(null);
@@ -16,7 +17,7 @@ export default function WhatsAppFloating() {
     return () => clearTimeout(timer);
   }, []);
 
-  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : '6285223344556';
+  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
 
   return (
     <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-2 select-none">

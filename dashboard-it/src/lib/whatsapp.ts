@@ -103,7 +103,7 @@ Mengenai pengajuan jual/trade-in laptop Anda di *Acuuy CCTV Garut* (${submission
 - *Harga Ekspektasi:* Rp ${Number(submission.expected_price).toLocaleString('id-ID')}
 - *Penawaran Estimasi Toko:* Rp ${Number(offeredPrice).toLocaleString('id-ID')}
 
-${messageNotes ? `Catatan Toko: ${messageNotes}\n\n` : ''}Jika Anda berkenan, unit dapat dibawa ke workshop toko kami di Tarogong Kidul, Garut untuk pengecekan fisik dan test fungsi langsung. Terima kasih!`;
+${messageNotes ? `Catatan Toko: ${messageNotes}\n\n` : ''}Jika Anda berkenan, unit dapat dibawa ke workshop toko kami di Jl. Dayeuhandap No.35, Garut Kota untuk pengecekan fisik dan test fungsi langsung. Terima kasih!`;
 
   return `https://wa.me/${customerPhone}?text=${encodeURIComponent(text)}`;
 }

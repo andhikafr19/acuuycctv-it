@@ -21,6 +21,7 @@ import { Portfolio, StoreSettings } from '@/lib/types';
 import { getStoreAll } from '@/lib/store';
 import BookingModal from '@/components/booking/BookingModal';
 import { formatWaPhone } from '@/lib/whatsapp';
+import { BUSINESS } from '@/lib/business';
 
 export default function PortofolioPage() {
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
@@ -48,7 +49,7 @@ export default function PortofolioPage() {
     (p) => selectedCategory === 'all' || p.category === selectedCategory
   );
 
-  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : '6285223344556';
+  const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
 
   return (
     <div className="space-y-16 pb-20">
