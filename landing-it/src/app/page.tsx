@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
-  Search,
   Star,
   Clock,
   MapPin,
@@ -35,7 +34,6 @@ export default function HomePage() {
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceType>('cctv');
   const [selectedLaptop, setSelectedLaptop] = useState<Laptop | null>(null);
-  const [quickTrackInput, setQuickTrackInput] = useState('');
 
   useEffect(() => {
     getStoreAll().then((data) => {
@@ -100,38 +98,6 @@ export default function HomePage() {
                   <LaptopIcon className="w-4 h-4 text-teal-400" />
                   <span>Katalog Laptop Bekas</span>
                 </Link>
-              </div>
-
-              {/* Quick Tracker Search Input */}
-              <div className="pt-4 max-w-lg">
-                <div className="bg-slate-800/80 p-2 rounded-2xl border border-slate-700/80 backdrop-blur-md flex items-center gap-2">
-                  <div className="pl-3 text-slate-400">
-                    <Search className="w-4 h-4 text-teal-400" />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Punya no. pesanan? Contoh: ACY-CCTV-..."
-                    value={quickTrackInput}
-                    onChange={(e) => setQuickTrackInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && quickTrackInput.trim()) {
-                        window.location.href = `/lacak?order=${encodeURIComponent(
-                          quickTrackInput.trim()
-                        )}`;
-                      }
-                    }}
-                    className="bg-transparent text-xs sm:text-sm text-white placeholder-slate-400 flex-1 focus:outline-none"
-                  />
-                  <Link
-                    href={`/lacak?order=${encodeURIComponent(quickTrackInput.trim())}`}
-                    className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-colors shrink-0"
-                  >
-                    Lacak Order
-                  </Link>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-2 pl-2">
-                  ✓ Pantau status teknisi, diagnosa servis, dan estimasi biaya secara real-time.
-                </p>
               </div>
             </div>
 
@@ -580,10 +546,10 @@ export default function HomePage() {
                 <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
                   <Activity className="w-5 h-5" />
                 </div>
-                <h4 className="text-base font-bold text-white">Pelacakan Status Real-Time</h4>
+                <h4 className="text-base font-bold text-white">Respon Cepat via WhatsApp</h4>
                 <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                  Tidak perlu cemas menebak pengerjaan servis atau survei CCTV. Cukup masukkan no. order
-                  di web untuk memantau tahapan kerja.
+                  Konsultasi, konfirmasi jadwal survei CCTV, hingga update pengerjaan servis langsung
+                  dibantu admin kami melalui WhatsApp.
                 </p>
               </div>
 
@@ -657,7 +623,7 @@ export default function HomePage() {
             </div>
             <h3 className="font-extrabold text-base text-slate-900">Pengerjaan & Garansi</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Teknisi mengerjakan sesuai standar terbaik, pantau progres via live tracking, dan
+              Teknisi mengerjakan sesuai standar terbaik, rapi, transparan, dan
               nikmati garansi toko.
             </p>
           </div>

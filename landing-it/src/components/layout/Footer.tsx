@@ -73,8 +73,8 @@ export default function Footer() {
               <Clock className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-white">Tracking Status Real-Time</h4>
-              <p className="text-xs text-slate-400">Pantau progres pekerjaan secara transparan</p>
+              <h4 className="text-sm font-bold text-white">Jam Operasional Jelas</h4>
+              <p className="text-xs text-slate-400">Senin - Sabtu, siap melayani Anda di toko</p>
             </div>
           </div>
         </div>
@@ -176,15 +176,6 @@ export default function Footer() {
               Akses Cepat
             </h4>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/lacak"
-                  className="text-teal-400 font-semibold hover:underline flex items-center gap-1.5"
-                >
-                  <ChevronRight className="w-3.5 h-3.5" />
-                  Lacak Status Pesanan
-                </Link>
-              </li>
               <li>
                 <Link
                   href="/kontak"

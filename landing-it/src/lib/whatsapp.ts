@@ -88,7 +88,7 @@ ${order.technician_name ? `👨‍🔧 Teknisi Bertugas: ${order.technician_name
       ? `💰 Estimasi Biaya: Rp ${order.estimated_cost.toLocaleString('id-ID')}\n`
       : ''
   }${notes ? `📝 Catatan: ${notes}\n` : ''}
-Anda dapat memantau status pesanan kapan saja melalui menu Lacak Pesanan di website kami.
+Jika ada pertanyaan, silakan balas pesan ini untuk menghubungi admin kami.
 
 Terima kasih atas kepercayaan Anda!`;
 

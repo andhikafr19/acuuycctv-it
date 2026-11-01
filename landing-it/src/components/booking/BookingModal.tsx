@@ -12,7 +12,6 @@ import {
   MapPin,
   FileText,
   Copy,
-  ExternalLink,
   MessageSquare,
   Sparkles,
   ArrowRight,
@@ -20,7 +19,6 @@ import {
 import { ServiceType, Order } from '@/lib/types';
 import { submitOrder, getStoreSettings } from '@/lib/store';
 import { createBookingWaLink } from '@/lib/whatsapp';
-import Link from 'next/link';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -149,7 +147,7 @@ export default function BookingModal({
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 mt-1">
             {submittedOrder
-              ? 'Simpan nomor order Anda untuk melacak status pengerjaan secara berkala.'
+              ? 'Simpan nomor order Anda dan konfirmasikan ke admin kami via WhatsApp.'
               : 'Isi data kebutuhan Anda, tim kami akan segera menghubungi untuk konfirmasi & jadwal survei.'}
           </p>
         </div>
@@ -164,7 +162,7 @@ export default function BookingModal({
 
               <div>
                 <span className="text-xs uppercase tracking-wider font-bold text-slate-400">
-                  Nomor Order Pelacakan Anda
+                  Nomor Order Anda
                 </span>
                 <div className="mt-1 flex items-center justify-center gap-2">
                   <span className="text-2xl sm:text-3xl font-black text-teal-700 font-mono tracking-tight bg-teal-50 px-4 py-1.5 rounded-xl border border-teal-200">
@@ -221,14 +219,6 @@ export default function BookingModal({
                   Konfirmasi Cepat via WhatsApp Toko
                 </a>
 
-                <Link
-                  href={`/lacak?order=${submittedOrder.order_number}`}
-                  onClick={onClose}
-                  className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold flex items-center justify-center gap-2 text-sm transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4 text-teal-600" />
-                  Buka Halaman Lacak Status Pesanan
-                </Link>
               </div>
             </div>
           ) : (
