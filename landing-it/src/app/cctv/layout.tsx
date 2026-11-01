@@ -42,7 +42,7 @@ const serviceSchema = {
   '@type': 'Service',
   name: 'Jasa Pasang & Instalasi CCTV Garut',
   serviceType: 'Instalasi CCTV',
-  provider: { '@id': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://acuuycctv-it.vercel.app'}/#business` },
+  provider: { '@id': `${process.env.NEXT_PUBLIC_SITE_URL || 'https://acuuycctv.vercel.app'}/#business` },
   areaServed: { '@type': 'AdministrativeArea', name: 'Kabupaten Garut' },
   offers: {
     '@type': 'AggregateOffer',

@@ -5,7 +5,7 @@ import Footer from '@/components/layout/Footer';
 import WhatsAppFloating from '@/components/layout/WhatsAppFloating';
 import { BUSINESS, waLink } from '@/lib/business';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://acuuycctv-it.vercel.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://acuuycctv.vercel.app';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
