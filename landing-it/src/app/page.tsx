@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Camera,
   Wrench,
-  HelpCircle,
   Laptop as LaptopIcon,
   ShieldCheck,
-  CheckCircle2,
   ArrowRight,
   Star,
   Clock,
@@ -18,6 +17,15 @@ import {
   Activity,
   HardDrive,
   Users,
+  Wifi,
+  Cpu,
+  Layers,
+  Zap,
+  Info,
+  Scale,
+  SlidersHorizontal,
+  Cable,
+  Check,
 } from 'lucide-react';
 import { StoreSettings, Laptop, ServiceType, Portfolio } from '@/lib/types';
 import { getStoreAll } from '@/lib/store';
@@ -175,197 +183,314 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          2. 4 PILAR LAYANAN UTAMA
+          2. EDUKASI: PERBEDAAN CCTV ANALOG VS IP CAMERA (PANDUAN MEMILIH)
          ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3.5 py-1.5 rounded-full border border-teal-200">
-            Pilar Layanan
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3.5 py-1.5 rounded-full border border-teal-200">
+            <Scale className="w-3.5 h-3.5" /> Panduan Memilih CCTV
           </span>
           <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight mt-3">
-            Penuhi Semua Kebutuhan Teknologi Anda di Satu Tempat
+            CCTV Analog vs IP Camera: Mana yang Tepat untuk Anda?
           </h2>
           <p className="text-sm sm:text-base text-slate-600 mt-2">
-            Dari instalasi kamera pengawas hingga upgrade hardware laptop, tim teknisi kami siap
-            membantu kebutuhan personal maupun instansi.
+            Pahami perbedaan mendasar cara kerja, fitur cerdas, dan efisiensi biaya agar Anda mendapatkan sistem keamanan yang paling pas dengan kebutuhan dan budget.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* 1. CCTV */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+        {/* 2 Kartu Perbandingan Visual Utama */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Kartu CCTV Analog */}
+          <div className="relative overflow-hidden bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none" />
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-700 flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                <Camera className="w-6 h-6" />
+              <div className="relative -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 h-48 sm:h-56 overflow-hidden bg-amber-50">
+                <Image
+                  src="/images/cctv-analog.jpg"
+                  alt="Kamera CCTV Analog dengan kabel koaksial dan perekam DVR"
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent" />
+                <span className="absolute top-4 left-4 text-[11px] font-black uppercase tracking-widest bg-white/90 backdrop-blur text-amber-800 px-3 py-1 rounded-full border border-amber-200 shadow-sm">
+                  Analog
+                </span>
               </div>
-              <h3 className="text-lg font-black text-slate-900 group-hover:text-teal-700 transition-colors">
-                Jasa Pasang CCTV Garut
+              <div className="flex items-center justify-between mb-4">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                  <Cable className="w-3.5 h-3.5" /> Perekam DVR & Kabel Koaksial
+                </span>
+                <span className="text-xs font-semibold text-slate-400">Paling Ekonomis</span>
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 flex items-center gap-2">
+                CCTV Analog <span className="text-xs font-normal text-slate-500">(HD-TVI / AHD / CVI)</span>
               </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Pemasangan kamera CCTV indoor/outdoor untuk rumah, toko kelontong, ruko, gudang,
-                sekolah di Garut. Pantau langsung dari HP Android / iPhone.
+              <p className="text-sm text-slate-600 mt-2.5 leading-relaxed">
+                Kamera mengirim sinyal video murni melalui kabel koaksial (RG59) menuju perekam <strong>DVR</strong> yang memproses dan menyimpan data rekaman.
               </p>
-              <ul className="mt-4 space-y-1.5 text-xs text-slate-700">
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Kamera Night Vision & Audio
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Paket 2, 4, 8, 16 Kamera
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Kerapihan Kabel Berstandar
-                </li>
-              </ul>
+
+              <div className="mt-5 space-y-2.5">
+                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-slate-900">Biaya Awal Ramah di Kantong:</strong> Solusi keamanan terbaik untuk budget hemat dengan reliabilitas tinggi.
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-slate-900">Instalasi Mudah & Pakai Kabel Lama:</strong> Sangat ideal menggantikan sistem CCTV lama tanpa tarik kabel ulang.
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                  <Check className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-slate-900">Resolusi Tajam 2 MP - 5 MP:</strong> Sudah sangat cukup untuk pengawasan harian rumah dan toko kelontong.
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                  Cocok Terbaik Untuk:
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="px-2.5 py-1 text-xs font-medium bg-amber-50/80 text-amber-900 rounded-lg border border-amber-200/60">Rumah Tinggal</span>
+                  <span className="px-2.5 py-1 text-xs font-medium bg-amber-50/80 text-amber-900 rounded-lg border border-amber-200/60">Warung & Toko Kelontong</span>
+                  <span className="px-2.5 py-1 text-xs font-medium bg-amber-50/80 text-amber-900 rounded-lg border border-amber-200/60">Kost-kostan</span>
+                  <span className="px-2.5 py-1 text-xs font-medium bg-amber-50/80 text-amber-900 rounded-lg border border-amber-200/60">Upgrade CCTV Lama</span>
+                </div>
+              </div>
             </div>
-            <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between">
-              <Link
-                href="/cctv"
-                className="text-xs font-bold text-slate-700 hover:text-teal-700 flex items-center gap-1"
-              >
-                Detail Info <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+
+            <div className="pt-6 mt-6 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-xs text-slate-500">Estimasi Paket Hemat</span>
               <button
                 onClick={() => openBooking('cctv')}
-                className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm"
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors flex items-center gap-1.5 shadow-sm"
               >
-                Pesan Jasa
+                Pilih CCTV Analog <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
 
-          {/* 2. Servis Komputer */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+          {/* Kartu IP Camera */}
+          <div className="relative overflow-hidden bg-gradient-to-br from-teal-900 via-teal-950 to-slate-950 text-white rounded-3xl p-6 sm:p-8 border border-teal-500/30 shadow-xl flex flex-col justify-between group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-teal-400/10 rounded-bl-full pointer-events-none" />
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-700 flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                <Wrench className="w-6 h-6" />
+              <div className="relative -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 h-48 sm:h-56 overflow-hidden bg-teal-950">
+                <Image
+                  src="/images/ip-camera.jpg"
+                  alt="IP Camera dengan kabel LAN PoE dan perekam NVR"
+                  fill
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-teal-950 via-teal-950/10 to-transparent" />
+                <span className="absolute top-4 left-4 text-[11px] font-black uppercase tracking-widest bg-teal-950/80 backdrop-blur text-teal-200 px-3 py-1 rounded-full border border-teal-400/40 shadow-sm">
+                  IP / Digital
+                </span>
               </div>
-              <h3 className="text-lg font-black text-slate-900 group-hover:text-teal-700 transition-colors">
-                Servis Komputer & Laptop
+              <div className="flex items-center justify-between mb-4">
+                <span className="inline-flex items-center gap-1.5 text-xs font-extrabold text-teal-300 bg-teal-900/60 px-3 py-1 rounded-full border border-teal-400/30">
+                  <Wifi className="w-3.5 h-3.5" /> Perekam NVR & Kabel LAN / PoE
+                </span>
+                <span className="text-xs font-bold text-amber-300 bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">Modern & Detail Ultra</span>
+              </div>
+              <h3 className="text-2xl font-black text-white flex items-center gap-2">
+                IP Camera <span className="text-xs font-normal text-teal-200">(Network Camera)</span>
               </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Perbaikan laptop mati total, kena air, ganti layar LCD pecah, ganti keyboard, kipas
-                panas berisik, instal ulang OS, dan upgrade performa SSD/RAM.
+              <p className="text-sm text-slate-300 mt-2.5 leading-relaxed">
+                Kamera cerdas yang memproses data digital langsung di kamera, mengirim gambar via kabel LAN (UTP) atau Wi-Fi ke perekam <strong>NVR</strong>.
               </p>
-              <ul className="mt-4 space-y-1.5 text-xs text-slate-700">
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Diagnosa Awal Gratis & Jelas
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Estimasi Biaya Sebelum Kerja
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Garansi Servis 1 Bulan
-                </li>
-              </ul>
+
+              <div className="mt-5 space-y-2.5">
+                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200 bg-teal-900/40 p-2.5 rounded-xl border border-teal-700/40">
+                  <Check className="w-4 h-4 text-teal-300 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white">Kualitas 4K & Zoom Sangat Tajam:</strong> Resolusi 2 MP hingga 8 MP (Ultra HD) untuk tangkap wajah & plat nomor detail.
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200 bg-teal-900/40 p-2.5 rounded-xl border border-teal-700/40">
+                  <Check className="w-4 h-4 text-teal-300 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white">Fitur AI Pintar & 2-Way Audio:</strong> Deteksi manusia/kendaraan akurat, pembatasan garis maya, dan bicara dua arah.
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200 bg-teal-900/40 p-2.5 rounded-xl border border-teal-700/40">
+                  <Check className="w-4 h-4 text-teal-300 shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-white">Kabel Rapi dengan PoE:</strong> Cukup 1 kabel LAN untuk sinyal data sekaligus daya listrik tanpa adaptor tambahan.
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5 pt-4 border-t border-teal-800/60">
+                <div className="text-xs font-bold text-teal-300 uppercase tracking-wider mb-2">
+                  Cocok Terbaik Untuk:
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="px-2.5 py-1 text-xs font-medium bg-teal-800/50 text-teal-100 rounded-lg border border-teal-600/40">Ruko & Kantor Bisnis</span>
+                  <span className="px-2.5 py-1 text-xs font-medium bg-teal-800/50 text-teal-100 rounded-lg border border-teal-600/40">Gudang & Pabrik</span>
+                  <span className="px-2.5 py-1 text-xs font-medium bg-teal-800/50 text-teal-100 rounded-lg border border-teal-600/40">Sekolah & Kampus</span>
+                  <span className="px-2.5 py-1 text-xs font-medium bg-teal-800/50 text-teal-100 rounded-lg border border-teal-600/40">Monitoring Jarak Jauh Fleksibel</span>
+                </div>
+              </div>
             </div>
-            <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between">
-              <Link
-                href="/servis"
-                className="text-xs font-bold text-slate-700 hover:text-teal-700 flex items-center gap-1"
-              >
-                Detail Info <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
+
+            <div className="pt-6 mt-6 border-t border-teal-800/60 flex items-center justify-between">
+              <span className="text-xs text-teal-300">Solusi Berteknologi Tinggi</span>
               <button
-                onClick={() => openBooking('servis_komputer')}
-                className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm"
+                onClick={() => openBooking('cctv')}
+                className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs transition-colors flex items-center gap-1.5 shadow-md shadow-teal-500/20"
               >
-                Pesan Servis
+                Pilih IP Camera <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
+        </div>
 
-          {/* 3. Jual Beli Laptop Bekas */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
+        {/* Tabel Komparasi Detail */}
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden mb-8">
+          <div className="p-5 sm:p-6 bg-slate-50/80 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <div className="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-700 flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                <LaptopIcon className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-black text-slate-900 group-hover:text-teal-700 transition-colors">
-                Laptop Bekas Berkualitas
+              <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
+                <SlidersHorizontal className="w-5 h-5 text-teal-600" /> Tabel Perbandingan Teknis Lengkap
               </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Katalog laptop bekas siap pakai (ThinkPad, ASUS TUF, Dell, HP) dengan kondisi prima,
-                sudah terinstal aplikasi lengkap, dan menerima tukar-tambah / jual laptop lama Anda.
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                Gunakan perbandingan parameter berikut sebagai referensi penentuan spesifikasi proyek Anda.
               </p>
-              <ul className="mt-4 space-y-1.5 text-xs text-slate-700">
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Grade A / B Transparan
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Baterai Sehat & Charger Original
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Terima Jual / Trade-In
-                </li>
-              </ul>
             </div>
-            <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between">
-              <Link
-                href="/katalog"
-                className="text-xs font-bold text-slate-700 hover:text-teal-700 flex items-center gap-1"
-              >
-                Buka Katalog <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <Link
-                href="/jual-laptop"
-                className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm"
-              >
-                Jual Laptop
-              </Link>
-            </div>
+            <span className="text-xs font-bold text-teal-700 bg-teal-100/70 px-3 py-1 rounded-full border border-teal-200 self-start sm:self-auto">
+              Informasi Umum Spesifikasi
+            </span>
           </div>
 
-          {/* 4. Konsultasi IT */}
-          <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1">
-            <div>
-              <div className="w-12 h-12 rounded-2xl bg-teal-500/10 text-teal-700 flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
-                <HelpCircle className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-black text-slate-900 group-hover:text-teal-700 transition-colors">
-                Konsultasi IT & Jaringan
-              </h3>
-              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                Jasa perancangan infrastruktur jaringan kantor, pembagian bandwidth Wi-Fi Mikrotik,
-                setup file sharing lokal, dan pengadaan perangkat komputer instansi.
-              </p>
-              <ul className="mt-4 space-y-1.5 text-xs text-slate-700">
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Solusi Jaringan Cepat & Stabil
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Perangkat Router & Switchboard
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
-                  Maintenance Rutin Bulanan
-                </li>
-              </ul>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs sm:text-sm">
+              <thead className="bg-slate-100/80 text-slate-700 uppercase font-black tracking-wider text-[11px] border-b border-slate-200">
+                <tr>
+                  <th scope="col" className="py-3.5 px-4 sm:px-6 w-1/4">Parameter</th>
+                  <th scope="col" className="py-3.5 px-4 sm:px-6 w-[37.5%] text-slate-900 bg-amber-50/40">CCTV Analog (HD)</th>
+                  <th scope="col" className="py-3.5 px-4 sm:px-6 w-[37.5%] text-teal-900 bg-teal-50/50">IP Camera (Digital Network)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
+                    <HardDrive className="w-4 h-4 text-slate-500" /> Perangkat Perekam
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-700 bg-amber-50/20">
+                    <strong>DVR (Digital Video Recorder)</strong>
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
+                    <strong>NVR (Network Video Recorder)</strong> / Cloud / MicroSD
+                  </td>
+                </tr>
+
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
+                    <Cable className="w-4 h-4 text-slate-500" /> Media Kabel
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-700 bg-amber-50/20">
+                    Kabel Koaksial (RG59) + kabel daya DC terpisah (kabel siamese)
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
+                    Kabel UTP LAN (Cat5e / Cat6) atau nirkabel (Wi-Fi). <em>PoE support</em>
+                  </td>
+                </tr>
+
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-slate-500" /> Resolusi & Ketajaman
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-700 bg-amber-50/20">
+                    Standar 2 MP (1080p) hingga 5 MP
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
+                    Lebih luas: 2 MP hingga 8 MP (4K Ultra HD) atau lebih
+                  </td>
+                </tr>
+
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
+                    <Cpu className="w-4 h-4 text-slate-500" /> Fitur Pintar & AI
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-700 bg-amber-50/20">
+                    Terbatas (deteksi gerakan umum/motion detection dasar)
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
+                    Kaya fitur: deteksi manusia/kendaraan, line crossing, face capture, 2-way audio
+                  </td>
+                </tr>
+
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-slate-500" /> Kemudahan Penambahan Titik
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-700 bg-amber-50/20">
+                    Dibatasi oleh slot port fisik DVR (4, 8, 16, 32 channel)
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
+                    Sangat fleksibel via switch jaringan lokal (LAN)
+                  </td>
+                </tr>
+
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
+                    <Activity className="w-4 h-4 text-slate-500" /> Pemantauan Lewat HP
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-700 bg-amber-50/20">
+                    Bisa dipantau lewat aplikasi HP jika DVR terhubung kabel internet
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
+                    Bisa dipantau via aplikasi HP / PC langsung per kamera atau via NVR
+                  </td>
+                </tr>
+
+                <tr className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-slate-500" /> Biaya Investasi
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-700 bg-amber-50/20">
+                    <span className="font-extrabold text-emerald-700">Ekonomis & Ramah Anggaran</span>
+                  </td>
+                  <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
+                    <span className="font-bold text-slate-800">Menengah ke Atas</span> (sebanding kualitas & fitur)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Banner Edukasi & Call to Action Konsultasi */}
+        <div className="bg-gradient-to-r from-teal-50 via-white to-teal-50 rounded-3xl p-6 sm:p-8 border border-teal-200 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-2 text-xs font-black text-teal-800 uppercase tracking-wider">
+              <Info className="w-4 h-4 text-teal-600" /> Masih Ragu Menentukan Pilihan?
             </div>
-            <div className="pt-6 mt-4 border-t border-slate-100 flex items-center justify-between">
-              <Link
-                href="/konsultasi"
-                className="text-xs font-bold text-slate-700 hover:text-teal-700 flex items-center gap-1"
-              >
-                Detail Info <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <button
-                onClick={() => openBooking('konsultasi_it')}
-                className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm"
-              >
-                Konsultasi
-              </button>
-            </div>
+            <h4 className="text-xl sm:text-2xl font-black text-slate-900">
+              Konsultasikan Denah & Kebutuhan Titik Anda Secara Gratis!
+            </h4>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Tim teknisi Acuuy CCTV siap membantu survei lokasi langsung di wilayah Garut, menghitung kebutuhan kabel, serta memberikan rekomendasi paket kamera analog atau IP Camera paling optimal.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
+            <Link
+              href="/cctv"
+              className="px-5 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold text-xs sm:text-sm text-center shadow-sm transition-colors"
+            >
+              Lihat Paket CCTV
+            </Link>
+            <button
+              onClick={() => openBooking('cctv')}
+              className="px-6 py-3 rounded-2xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs sm:text-sm text-center shadow-md shadow-teal-600/20 transition-all hover:-translate-y-0.5"
+            >
+              Jadwalkan Survei Gratis
+            </button>
           </div>
         </div>
       </section>
