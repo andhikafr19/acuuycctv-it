@@ -27,26 +27,22 @@ import {
   Cable,
   Check,
 } from 'lucide-react';
-import { StoreSettings, Laptop, ServiceType, Portfolio } from '@/lib/types';
+import { StoreSettings, ServiceType, Portfolio } from '@/lib/types';
 import { getStoreAll } from '@/lib/store';
 import { formatWaPhone } from '@/lib/whatsapp';
 import { BUSINESS } from '@/lib/business';
 import BookingModal from '@/components/booking/BookingModal';
-import LaptopCard from '@/components/laptop/LaptopCard';
-import LaptopDetailModal from '@/components/laptop/LaptopDetailModal';
+import CertificateSection from '@/components/certificate/CertificateSection';
 
 export default function HomePage() {
   const [settings, setSettings] = useState<StoreSettings | null>(null);
-  const [laptops, setLaptops] = useState<Laptop[]>([]);
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<ServiceType>('cctv');
-  const [selectedLaptop, setSelectedLaptop] = useState<Laptop | null>(null);
 
   useEffect(() => {
     getStoreAll().then((data) => {
       setSettings(data.settings);
-      setLaptops(data.laptops.slice(0, 4));
       setPortfolios(data.portfolios?.slice(0, 3) || []);
     });
   }, []);
@@ -577,53 +573,9 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          3. FEATURED LAPTOP SHOWCASE
+          3. CERTIFICATE SHOWCASE (SLIDING & ZOOM IN / OUT)
          ========================================================================= */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div>
-            <span className="text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
-              Katalog Pilihan Garut
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-2">
-              Laptop Bekas Bergaransi Siap Pakai
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Unit telah lolos pengujian 20 titik fungsi hardware. Bebas pilih spek sesuai kebutuhan
-              kantor, kuliah, atau gaming.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/jual-laptop"
-              className="px-4 py-2.5 rounded-xl border border-slate-300 hover:border-slate-400 text-slate-800 text-xs font-bold transition-colors"
-            >
-              Mau Jual Laptop Anda?
-            </Link>
-            <Link
-              href="/katalog"
-              className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-700/20 transition-all flex items-center gap-1.5"
-            >
-              <span>Lihat Semua Unit</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-
-        {settings && laptops.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {laptops.map((lap) => (
-              <LaptopCard
-                key={lap.id}
-                laptop={lap}
-                settings={settings}
-                onOpenDetail={(item) => setSelectedLaptop(item)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      <CertificateSection />
 
       {/* =========================================================================
           4. KENAPA PILIH ACUUY CCTV GARUT
@@ -761,15 +713,6 @@ export default function HomePage() {
         onClose={() => setBookingModalOpen(false)}
         defaultService={selectedService}
       />
-
-      {/* Laptop Detail Modal */}
-      {settings && (
-        <LaptopDetailModal
-          laptop={selectedLaptop}
-          settings={settings}
-          onClose={() => setSelectedLaptop(null)}
-        />
-      )}
     </div>
   );
 }
