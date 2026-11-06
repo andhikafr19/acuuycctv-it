@@ -33,6 +33,7 @@ import { formatWaPhone } from '@/lib/whatsapp';
 import { BUSINESS } from '@/lib/business';
 import BookingModal from '@/components/booking/BookingModal';
 import CertificateSection from '@/components/certificate/CertificateSection';
+import PopularPackagesSection from '@/components/cctv/PopularPackagesSection';
 
 export default function HomePage() {
   const [settings, setSettings] = useState<StoreSettings | null>(null);
@@ -490,6 +491,11 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* =========================================================================
+          2A. PAKET POPULER CCTV (3 PAKET + TOMBOL PILIH PAKET LAINNYA)
+         ========================================================================= */}
+      <PopularPackagesSection />
 
       {/* =========================================================================
           2B. BUKTI PORTOFOLIO CCTV GARUT

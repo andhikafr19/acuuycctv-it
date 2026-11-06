@@ -47,7 +47,7 @@ const steps = [
 
 export default function CctvPage() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState<string>('4 Kamera');
+  const [selectedPackage, setSelectedPackage] = useState<string>('Paket 4 Kamera Full HD');
 
   const packages = [
     {
@@ -206,7 +206,7 @@ export default function CctvPage() {
       </section>
 
       {/* Package Cards */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="paket" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
             Pilihan Paket Pasang CCTV Lengkap

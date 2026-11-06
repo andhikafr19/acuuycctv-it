@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   CheckCircle2,
@@ -10,15 +10,81 @@ import {
   Phone,
   User,
   MapPin,
-  FileText,
   Copy,
   MessageSquare,
   Sparkles,
   ArrowRight,
+  Package,
 } from 'lucide-react';
 import { ServiceType, Order } from '@/lib/types';
-import { submitOrder, getStoreSettings } from '@/lib/store';
-import { createBookingWaLink } from '@/lib/whatsapp';
+import { submitOrder } from '@/lib/store';
+
+export interface CctvPackageOption {
+  name: string;
+  price: string;
+  estimatedCost: number;
+  cameraCount: number;
+  tag?: string;
+}
+
+export const CCTV_PACKAGE_OPTIONS: CctvPackageOption[] = [
+  {
+    name: 'Paket HiLook 4 Kamera 2MP',
+    price: 'Rp 2.650.000',
+    estimatedCost: 2650000,
+    cameraCount: 4,
+    tag: 'Paling Hemat',
+  },
+  {
+    name: 'Paket Hikvision ColorVu 4 Kamera',
+    price: 'Rp 3.650.000',
+    estimatedCost: 3650000,
+    cameraCount: 4,
+    tag: 'Paling Populer',
+  },
+  {
+    name: 'Paket Dahua IP Camera 4MP',
+    price: 'Rp 5.250.000',
+    estimatedCost: 5250000,
+    cameraCount: 4,
+    tag: 'Smart & Detail',
+  },
+  {
+    name: 'Paket 2 Kamera HD',
+    price: 'Rp 1.850.000',
+    estimatedCost: 1850000,
+    cameraCount: 2,
+    tag: 'Hemat Rumah',
+  },
+  {
+    name: 'Paket 4 Kamera Full HD',
+    price: 'Rp 2.950.000',
+    estimatedCost: 2950000,
+    cameraCount: 4,
+    tag: 'Favorit Ruko & Rumah',
+  },
+  {
+    name: 'Paket 8 Kamera IP Smart',
+    price: 'Rp 5.750.000',
+    estimatedCost: 5750000,
+    cameraCount: 8,
+    tag: 'Bisnis & Toko Besar',
+  },
+  {
+    name: 'Paket 16 Kamera Enterprise',
+    price: 'Konsultasi / Custom',
+    estimatedCost: 0,
+    cameraCount: 16,
+    tag: 'Gudang & Instansi',
+  },
+  {
+    name: 'Custom / Survei Lokasi Dulu',
+    price: 'Gratis Survei & Estimasi',
+    estimatedCost: 0,
+    cameraCount: 0,
+    tag: 'Fleksibel',
+  },
+];
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -42,7 +108,9 @@ export default function BookingModal({
   const [description, setDescription] = useState('');
 
   // Specific service fields
-  const [cameraCount, setCameraCount] = useState('4');
+  const [selectedPackageName, setSelectedPackageName] = useState<string>(
+    presetDetails?.selected_package || 'Paket Hikvision ColorVu 4 Kamera'
+  );
   const [propertyType, setPropertyType] = useState('Rumah Tinggal');
   const [deviceBrand, setDeviceBrand] = useState('');
   const [deviceIssue, setDeviceIssue] = useState('');
@@ -52,7 +120,33 @@ export default function BookingModal({
   const [submittedOrder, setSubmittedOrder] = useState<Order | null>(null);
   const [copied, setCopied] = useState(false);
 
+  // Sync serviceType & selected package whenever modal opens or presetDetails changes
+  useEffect(() => {
+    if (isOpen) {
+      setServiceType(defaultService);
+      setSubmittedOrder(null);
+      if (presetDetails?.selected_package) {
+        const matched = CCTV_PACKAGE_OPTIONS.find(
+          (p) => p.name.toLowerCase() === String(presetDetails.selected_package).toLowerCase()
+        );
+        if (matched) {
+          setSelectedPackageName(matched.name);
+        } else {
+          setSelectedPackageName(String(presetDetails.selected_package));
+        }
+      }
+    }
+  }, [isOpen, defaultService, presetDetails?.selected_package]);
+
   if (!isOpen) return null;
+
+  const currentPackage: CctvPackageOption =
+    CCTV_PACKAGE_OPTIONS.find((p) => p.name === selectedPackageName) || {
+      name: selectedPackageName,
+      price: presetDetails?.package_price || 'Sesuai Survei',
+      estimatedCost: Number(presetDetails?.estimated_cost) || 0,
+      cameraCount: Number(presetDetails?.camera_count) || 4,
+    };
 
   const generateOrderNumber = (type: ServiceType) => {
     const prefix =
@@ -73,12 +167,17 @@ export default function BookingModal({
     const orderNumber = generateOrderNumber(serviceType);
 
     let specificDetails: Record<string, any> = { ...presetDetails };
+    let estimatedCost = 0;
+
     if (serviceType === 'cctv') {
       specificDetails = {
         ...specificDetails,
-        camera_count: Number(cameraCount),
+        selected_package: currentPackage.name,
+        package_price: currentPackage.price,
+        camera_count: currentPackage.cameraCount,
         property_type: propertyType,
       };
+      estimatedCost = currentPackage.estimatedCost;
     } else if (serviceType === 'servis_komputer') {
       specificDetails = {
         ...specificDetails,
@@ -92,13 +191,17 @@ export default function BookingModal({
       };
     }
 
+    const defaultCctvDesc = `Pemesanan ${currentPackage.name} (${currentPackage.price}) untuk ${propertyType}`;
     const fullDescription =
-      description ||
-      (serviceType === 'cctv'
-        ? `Pengajuan survei & pemasangan paket ${cameraCount} kamera untuk ${propertyType}`
+      description.trim()
+        ? serviceType === 'cctv'
+          ? `${defaultCctvDesc} — Catatan: ${description.trim()}`
+          : description.trim()
+        : serviceType === 'cctv'
+        ? defaultCctvDesc
         : serviceType === 'servis_komputer'
         ? `Keluhan servis: ${deviceBrand} - ${deviceIssue}`
-        : `Permintaan konsultasi IT terkait ${consultationTopic}`);
+        : `Permintaan konsultasi IT terkait ${consultationTopic}`;
 
     const res = await submitOrder({
       order_number: orderNumber,
@@ -110,6 +213,7 @@ export default function BookingModal({
       city: city || 'Garut',
       description: fullDescription,
       specific_details: specificDetails,
+      estimated_cost: estimatedCost,
     });
 
     setIsSubmitting(false);
@@ -192,6 +296,23 @@ export default function BookingModal({
                   <span className="text-slate-500">WhatsApp:</span>
                   <span className="font-bold text-slate-800">{submittedOrder.customer_phone}</span>
                 </div>
+                {submittedOrder.service_type === 'cctv' &&
+                  submittedOrder.specific_details?.selected_package && (
+                    <>
+                      <div className="flex justify-between gap-2">
+                        <span className="text-slate-500">Paket Dipilih:</span>
+                        <span className="font-bold text-teal-700 text-right">
+                          {submittedOrder.specific_details.selected_package}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Harga Paket:</span>
+                        <span className="font-black text-slate-900">
+                          {submittedOrder.specific_details.package_price}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 <div className="flex justify-between">
                   <span className="text-slate-500">Alamat:</span>
                   <span className="font-bold text-slate-800 text-right max-w-[240px] truncate">
@@ -209,7 +330,10 @@ export default function BookingModal({
               <div className="flex flex-col gap-3 pt-2">
                 <a
                   href={`https://wa.me/6285158722545?text=${encodeURIComponent(
-                    `Halo Admin Acuuy CCTV Garut, saya sudah submit pesanan dengan No. Order: ${submittedOrder.order_number}. Mohon konfirmasinya ya. Terima kasih!`
+                    submittedOrder.service_type === 'cctv' &&
+                      submittedOrder.specific_details?.selected_package
+                      ? `Halo Admin Acuuy CCTV Garut, saya sudah submit pesanan dengan No. Order: ${submittedOrder.order_number} untuk *${submittedOrder.specific_details.selected_package}* (${submittedOrder.specific_details.package_price}). Mohon konfirmasinya ya. Terima kasih!`
+                      : `Halo Admin Acuuy CCTV Garut, saya sudah submit pesanan dengan No. Order: ${submittedOrder.order_number}. Mohon konfirmasinya ya. Terima kasih!`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -218,7 +342,6 @@ export default function BookingModal({
                   <MessageSquare className="w-4 h-4" />
                   Konfirmasi Cepat via WhatsApp Toko
                 </a>
-
               </div>
             </div>
           ) : (
@@ -272,22 +395,54 @@ export default function BookingModal({
 
               {/* Dynamic Service Specific Fields */}
               {serviceType === 'cctv' && (
-                <div className="bg-teal-50/50 rounded-2xl p-3.5 border border-teal-100 space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
+                <div className="bg-teal-50/60 rounded-2xl p-3.5 border border-teal-200/80 space-y-3">
+                  {/* Selected Package & Price Summary Badge */}
+                  <div className="flex items-center justify-between gap-3 bg-white rounded-xl p-3 border border-teal-200 shadow-sm">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
+                        <Package className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-teal-700">
+                          Paket Dipilih
+                        </div>
+                        <div className="text-xs sm:text-sm font-black text-slate-900 truncate">
+                          {currentPackage.name}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <div className="text-[10px] font-semibold text-slate-400">Estimasi Harga</div>
+                      <div className="text-xs sm:text-sm font-black text-teal-700">
+                        {currentPackage.price}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 mb-1">
-                        Jumlah Kamera
+                        Nama Paket CCTV
                       </label>
                       <select
-                        value={cameraCount}
-                        onChange={(e) => setCameraCount(e.target.value)}
+                        value={selectedPackageName}
+                        onChange={(e) => setSelectedPackageName(e.target.value)}
                         className="w-full text-xs font-semibold rounded-xl border border-slate-200 bg-white px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none"
                       >
-                        <option value="2">Paket 2 Kamera</option>
-                        <option value="4">Paket 4 Kamera (Populer)</option>
-                        <option value="8">Paket 8 Kamera</option>
-                        <option value="16">Paket 16 Kamera</option>
-                        <option value="0">Custom / Survei Lokasi</option>
+                        <optgroup label="🔥 Paket Populer Brand Resmi">
+                          {CCTV_PACKAGE_OPTIONS.slice(0, 3).map((pkg) => (
+                            <option key={pkg.name} value={pkg.name}>
+                              {pkg.name} — {pkg.price}
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="📦 Pilihan Paket Lainnya">
+                          {CCTV_PACKAGE_OPTIONS.slice(3).map((pkg) => (
+                            <option key={pkg.name} value={pkg.name}>
+                              {pkg.name} ({pkg.price})
+                            </option>
+                          ))}
+                        </optgroup>
                       </select>
                     </div>
 

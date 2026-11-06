@@ -87,7 +87,7 @@ export async function POST(request: Request) {
         specific_details: data.specific_details || {},
         photo_urls: data.photo_urls || [],
         status: 'baru',
-        estimated_cost: 0,
+        estimated_cost: Number(data.estimated_cost) || 0,
         final_cost: 0,
         technician_id: '',
         technician_name: '',
