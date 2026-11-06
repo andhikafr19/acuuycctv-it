@@ -18,6 +18,8 @@ import {
   Wrench,
 } from 'lucide-react';
 import BookingModal from '@/components/booking/BookingModal';
+import CctvPackageCatalog from '@/components/cctv/CctvPackageCatalog';
+import { CctvCatalogPackage } from '@/lib/cctv-packages';
 import { BUSINESS, waLink } from '@/lib/business';
 import { cctvFaqs } from './faqs';
 
@@ -47,79 +49,18 @@ const steps = [
 
 export default function CctvPage() {
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedPackage, setSelectedPackage] = useState<string>('Paket 4 Kamera Full HD');
+  const [selectedPackage, setSelectedPackage] = useState<string>('Paket Hikvision ColorVu 4 Kamera');
+  const [selectedPrice, setSelectedPrice] = useState<string>('Rp 3.650.000');
 
-  const packages = [
-    {
-      name: 'Paket 2 Kamera HD',
-      tag: 'Hemat Rumah',
-      price: 'Rp 1.850.000',
-      description: 'Ideal untuk pengawasan teras rumah, garasi mobil, atau pintu gerbang utama.',
-      features: [
-        '2 Unit Kamera Indoor / Outdoor HD 2MP',
-        'DVR 4 Channel (Bisa Upgrade Kamera)',
-        'Harddisk 500GB Khusus CCTV',
-        'Kabel Coaxial + Power 30 Meter',
-        'Power Supply & Konektor Lengkap',
-        'Setting Online ke HP Android / iPhone',
-        'Gratis Jasa Pasang Area Garut Kota',
-        'Garansi Unit & Pemasangan 1 Tahun',
-      ],
-    },
-    {
-      name: 'Paket 4 Kamera Full HD',
-      tag: 'Paling Populer',
-      price: 'Rp 2.950.000',
-      popular: true,
-      description:
-        'Pilihan terfavorit pemilik ruko, toko kelontong, kafe, dan rumah tinggal bertingkat.',
-      features: [
-        '4 Unit Kamera 2MP / 3MP ColorVu (Berwarna 24 Jam)',
-        'DVR 4 Channel Hybrid Audio Built-in',
-        'Harddisk 1TB Surveillance (Rekam 2-3 Minggu)',
-        'Kabel Coaxial + Power 60 Meter',
-        'Power Supply Jaring & Konektor Berkualitas',
-        'Setting Pantau di HP / Tablet / PC',
-        'Gratis Instalasi Rapi oleh Teknisi Garut',
-        'Garansi Toko & Unit 1 Tahun',
-      ],
-    },
-    {
-      name: 'Paket 8 Kamera IP Smart',
-      tag: 'Bisnis & Toko Besar',
-      price: 'Rp 5.750.000',
-      description:
-        'Sistem pengawasan menyeluruh untuk minimarket, gudang, kantor, dan pabrik di Garut.',
-      features: [
-        '8 Unit Kamera HD/IP Crystal Clear',
-        'NVR / DVR 8 Channel High Performance',
-        'Harddisk 2TB Surveillance Rekam Panjang',
-        'Kabel Instalasi 120 Meter + Conduit Rapi',
-        'Fitur Smart Motion Alert ke Smartphone',
-        'Setting Multi-User Monitoring',
-        'Garansi Resmi 1 Tahun + Free Kunjungan Maintenance 1x',
-      ],
-    },
-    {
-      name: 'Paket 16 Kamera Enterprise',
-      tag: 'Gudang & Instansi',
-      price: 'Konsultasi / Custom',
-      description:
-        'Infrastruktur kamera terintegrasi untuk sekolah, instansi dinas, pesantren, atau area pergudangan.',
-      features: [
-        'Hingga 16 Titik Kamera IP 4MP / 5MP Ultra HD',
-        'NVR 16 Channel + PoE Switch Jaringan',
-        'Harddisk 4TB Surveillance Grade',
-        'Instalasi Kabel UTP Cat6 Berstandar Rapi',
-        'Central Monitoring Console Setup',
-        'Pelatihan Pengoperasian Operator Toko/Admin',
-        'SLA Servis Prioritas & Garansi 1 Tahun',
-      ],
-    },
-  ];
+  const handleSelectCatalogPackage = (pkg: CctvCatalogPackage) => {
+    setSelectedPackage(pkg.name);
+    setSelectedPrice(pkg.price);
+    setModalOpen(true);
+  };
 
-  const handleOrderPackage = (pkgName: string) => {
-    setSelectedPackage(pkgName);
+  const handleOpenCustomSurvey = () => {
+    setSelectedPackage('Custom / Survei Lokasi Dulu');
+    setSelectedPrice('Gratis Survei & Estimasi');
     setModalOpen(true);
   };
 
@@ -205,85 +146,27 @@ export default function CctvPage() {
         </div>
       </section>
 
-      {/* Package Cards */}
+      {/* Package Cards with Interactive Multi-Filter */}
       <section id="paket" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-24">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        <div className="text-center max-w-3xl mx-auto mb-8">
+          <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3.5 py-1 rounded-full border border-teal-200 mb-2">
+            Katalog Paket Resmi Terlengkap
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight">
             Pilihan Paket Pasang CCTV Lengkap
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1">
-            Harga sudah termasuk unit kamera, DVR/NVR, kabel, konektor, harddisk, dan jasa instalasi.
-            Tinggal terima beres!
+          <p className="text-xs sm:text-sm text-slate-600 mt-2">
+            Gunakan filter di bawah untuk memilih <strong>Brand</strong>,{' '}
+            <strong>Jenis Kamera (Analog / IP Camera)</strong>, dan{' '}
+            <strong>Seri Fitur (Standard / Audio / ColorVu Audio)</strong>. Harga sudah termasuk unit
+            kamera, DVR/NVR, harddisk, kabel, konektor, dan jasa instalasi rapi!
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {packages.map((pkg, idx) => (
-            <div
-              key={idx}
-              className={`rounded-3xl p-6 flex flex-col justify-between transition-all duration-300 ${
-                pkg.popular
-                  ? 'bg-gradient-to-b from-slate-900 to-teal-950 text-white shadow-xl scale-[1.02] border-2 border-teal-500'
-                  : 'bg-white border border-slate-200/80 shadow-sm hover:shadow-lg text-slate-900'
-              }`}
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span
-                    className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full ${
-                      pkg.popular
-                        ? 'bg-teal-500 text-slate-950'
-                        : 'bg-teal-50 text-teal-800 border border-teal-200'
-                    }`}
-                  >
-                    {pkg.tag}
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-black">{pkg.name}</h3>
-                <p
-                  className={`text-xs mt-1 line-clamp-2 ${
-                    pkg.popular ? 'text-slate-300' : 'text-slate-500'
-                  }`}
-                >
-                  {pkg.description}
-                </p>
-
-                <div className="mt-4 pt-4 border-t border-slate-200/20">
-                  <span className="text-xl font-black text-teal-400">{pkg.price}</span>
-                </div>
-
-                <ul className="mt-5 space-y-2 text-xs">
-                  {pkg.features.map((feat, fIdx) => (
-                    <li key={fIdx} className="flex items-start gap-2">
-                      <CheckCircle2
-                        className={`w-4 h-4 shrink-0 mt-0.5 ${
-                          pkg.popular ? 'text-teal-400' : 'text-teal-600'
-                        }`}
-                      />
-                      <span className={pkg.popular ? 'text-slate-200' : 'text-slate-700'}>
-                        {feat}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="pt-6 mt-6 border-t border-slate-200/20">
-                <button
-                  onClick={() => handleOrderPackage(pkg.name)}
-                  className={`w-full py-3 rounded-xl font-extrabold text-xs shadow-md transition-all ${
-                    pkg.popular
-                      ? 'bg-teal-400 hover:bg-teal-300 text-slate-950'
-                      : 'bg-slate-900 hover:bg-teal-600 text-white'
-                  }`}
-                >
-                  Pilih Paket Ini
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <CctvPackageCatalog
+          onSelectPackage={handleSelectCatalogPackage}
+          onOpenCustomSurvey={handleOpenCustomSurvey}
+        />
       </section>
 
       {/* Installation Process */}
@@ -399,7 +282,10 @@ export default function CctvPage() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         defaultService="cctv"
-        presetDetails={{ selected_package: selectedPackage }}
+        presetDetails={{
+          selected_package: selectedPackage,
+          package_price: selectedPrice,
+        }}
       />
     </div>
   );

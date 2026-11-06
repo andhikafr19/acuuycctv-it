@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { ServiceType, Order } from '@/lib/types';
 import { submitOrder } from '@/lib/store';
+import { CCTV_CATALOG_PACKAGES } from '@/lib/cctv-packages';
 
 export interface CctvPackageOption {
   name: string;
@@ -28,34 +29,13 @@ export interface CctvPackageOption {
 }
 
 export const CCTV_PACKAGE_OPTIONS: CctvPackageOption[] = [
-  {
-    name: 'Paket HiLook 4 Kamera 2MP',
-    price: 'Rp 2.650.000',
-    estimatedCost: 2650000,
-    cameraCount: 4,
-    tag: 'Paling Hemat',
-  },
-  {
-    name: 'Paket Hikvision ColorVu 4 Kamera',
-    price: 'Rp 3.650.000',
-    estimatedCost: 3650000,
-    cameraCount: 4,
-    tag: 'Paling Populer',
-  },
-  {
-    name: 'Paket Dahua IP Camera 4MP',
-    price: 'Rp 5.250.000',
-    estimatedCost: 5250000,
-    cameraCount: 4,
-    tag: 'Smart & Detail',
-  },
-  {
-    name: 'Paket 2 Kamera HD',
-    price: 'Rp 1.850.000',
-    estimatedCost: 1850000,
-    cameraCount: 2,
-    tag: 'Hemat Rumah',
-  },
+  ...CCTV_CATALOG_PACKAGES.map((pkg) => ({
+    name: pkg.name,
+    price: pkg.price,
+    estimatedCost: pkg.estimatedCost,
+    cameraCount: pkg.cameraCount,
+    tag: pkg.tag || `${pkg.brand} ${pkg.series}`,
+  })),
   {
     name: 'Paket 4 Kamera Full HD',
     price: 'Rp 2.950.000',
@@ -429,15 +409,36 @@ export default function BookingModal({
                         onChange={(e) => setSelectedPackageName(e.target.value)}
                         className="w-full text-xs font-semibold rounded-xl border border-slate-200 bg-white px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none"
                       >
-                        <optgroup label="🔥 Paket Populer Brand Resmi">
-                          {CCTV_PACKAGE_OPTIONS.slice(0, 3).map((pkg) => (
-                            <option key={pkg.name} value={pkg.name}>
+                        <optgroup label="🔥 Paket Hikvision Resmi">
+                          {CCTV_CATALOG_PACKAGES.filter((p) => p.brand === 'Hikvision').map((pkg) => (
+                            <option key={pkg.id} value={pkg.name}>
                               {pkg.name} — {pkg.price}
                             </option>
                           ))}
                         </optgroup>
-                        <optgroup label="📦 Pilihan Paket Lainnya">
-                          {CCTV_PACKAGE_OPTIONS.slice(3).map((pkg) => (
+                        <optgroup label="💰 Paket HiLook (by Hikvision)">
+                          {CCTV_CATALOG_PACKAGES.filter((p) => p.brand === 'HiLook').map((pkg) => (
+                            <option key={pkg.id} value={pkg.name}>
+                              {pkg.name} — {pkg.price}
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="🛡️ Paket Dahua Technology">
+                          {CCTV_CATALOG_PACKAGES.filter((p) => p.brand === 'Dahua').map((pkg) => (
+                            <option key={pkg.id} value={pkg.name}>
+                              {pkg.name} — {pkg.price}
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="📶 Paket Smart Wi-Fi EZVIZ & IMOU">
+                          {CCTV_CATALOG_PACKAGES.filter((p) => p.brand === 'EZVIZ / IMOU').map((pkg) => (
+                            <option key={pkg.id} value={pkg.name}>
+                              {pkg.name} — {pkg.price}
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="📦 Opsi Custom / Survei">
+                          {CCTV_PACKAGE_OPTIONS.slice(CCTV_CATALOG_PACKAGES.length).map((pkg) => (
                             <option key={pkg.name} value={pkg.name}>
                               {pkg.name} ({pkg.price})
                             </option>
