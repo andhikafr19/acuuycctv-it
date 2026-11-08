@@ -65,7 +65,7 @@ export default function Navbar() {
   const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all">
+    <header className="sticky top-0 z-40 w-full bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm transition-all">
       {/* Top Banner (Garut Local Touch) */}
       <div className="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 hidden sm:block border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex justify-between items-center">

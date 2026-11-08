@@ -100,7 +100,7 @@ export default function BookingModal({
   const [submittedOrder, setSubmittedOrder] = useState<Order | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Sync serviceType & selected package whenever modal opens or presetDetails changes
+  // Sync serviceType, selected package & lock body scroll whenever modal opens
   useEffect(() => {
     if (isOpen) {
       setServiceType(defaultService);
@@ -115,7 +115,13 @@ export default function BookingModal({
           setSelectedPackageName(String(presetDetails.selected_package));
         }
       }
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
     }
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isOpen, defaultService, presetDetails?.selected_package]);
 
   if (!isOpen) return null;
@@ -213,20 +219,28 @@ export default function BookingModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-8">
+    <div
+      className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/65 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-auto max-h-[90vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header Modal */}
-        <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 p-6 text-white relative">
+        <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900 p-5 sm:p-6 text-white relative shrink-0">
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-colors"
+            aria-label="Tutup modal"
+            className="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-slate-300 hover:text-white transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 text-xs font-semibold mb-2 border border-teal-500/30">
             <Sparkles className="w-3.5 h-3.5" /> Acuuy CCTV & IT Garut
           </div>
-          <h3 className="text-xl sm:text-2xl font-black tracking-tight">
+          <h3 className="text-lg sm:text-2xl font-black tracking-tight pr-8">
             {submittedOrder ? 'Pemesanan Berhasil Terkirim!' : 'Formulir Pemesanan Layanan'}
           </h3>
           <p className="text-xs sm:text-sm text-slate-300 mt-1">
@@ -237,7 +251,7 @@ export default function BookingModal({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6">
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1">
           {submittedOrder ? (
             <div className="space-y-6 text-center py-2">
               <div className="w-16 h-16 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center mx-auto shadow-inner">

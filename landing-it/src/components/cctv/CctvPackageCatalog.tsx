@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Camera,
   CheckCircle2,
@@ -16,6 +16,8 @@ import {
   Building2,
   Cpu,
   MessageSquare,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 import {
   CCTV_CATALOG_PACKAGES,
@@ -67,6 +69,8 @@ const CHANNEL_OPTIONS: { value: ChannelFilter; label: string }[] = [
   { value: 16, label: '16 Kamera' },
 ];
 
+const PAGE_SIZE = 8;
+
 export default function CctvPackageCatalog({
   onSelectPackage,
   onOpenCustomSurvey,
@@ -75,6 +79,12 @@ export default function CctvPackageCatalog({
   const [selectedType, setSelectedType] = useState<CameraTypeFilter>('Semua');
   const [selectedSeries, setSelectedSeries] = useState<SeriesFilter>('Semua');
   const [selectedChannel, setSelectedChannel] = useState<ChannelFilter>('Semua');
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+
+  // Reset visible count back to 8 whenever any filter changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [selectedBrand, selectedType, selectedSeries, selectedChannel]);
 
   const filteredPackages = useMemo(() => {
     return CCTV_CATALOG_PACKAGES.filter((pkg) => {
@@ -85,6 +95,25 @@ export default function CctvPackageCatalog({
       return true;
     });
   }, [selectedBrand, selectedType, selectedSeries, selectedChannel]);
+
+  const displayedPackages = useMemo(() => {
+    return filteredPackages.slice(0, visibleCount);
+  }, [filteredPackages, visibleCount]);
+
+  const hasMorePackages = visibleCount < filteredPackages.length;
+  const remainingPackagesCount = Math.max(0, filteredPackages.length - visibleCount);
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, filteredPackages.length));
+  };
+
+  const handleShowLess = () => {
+    setVisibleCount(PAGE_SIZE);
+    const el = document.getElementById('paket');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   const activeSectionTitle = useMemo(() => {
     const brandPart = selectedBrand === 'Semua' ? 'SEMUA BRAND RESMI' : `CCTV ${selectedBrand.toUpperCase()}`;
@@ -307,8 +336,9 @@ export default function CctvPackageCatalog({
           </div>
 
           <div className="text-xs font-semibold text-slate-500">
-            Menampilkan <strong className="text-slate-900">{filteredPackages.length}</strong> paket
-            siap pasang
+            Menampilkan{' '}
+            <strong className="text-slate-900">{displayedPackages.length}</strong> dari{' '}
+            <strong className="text-slate-900">{filteredPackages.length}</strong> paket siap pasang
           </div>
         </div>
       </div>
@@ -357,8 +387,9 @@ export default function CctvPackageCatalog({
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-          {filteredPackages.map((pkg) => {
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+            {displayedPackages.map((pkg) => {
             const colors = getBrandColors(pkg.brand);
             return (
               <div
@@ -647,7 +678,59 @@ export default function CctvPackageCatalog({
               </div>
             );
           })}
-        </div>
+          </div>
+
+          {/* LOAD MORE / PAGINATION CONTROLS */}
+          {filteredPackages.length > PAGE_SIZE && (
+            <div className="pt-4 flex flex-col items-center gap-3">
+              {/* Progress Indicator */}
+              <div className="w-full max-w-xs space-y-1.5 text-center">
+                <div className="text-xs font-semibold text-slate-500">
+                  Menampilkan <strong className="text-slate-900">{displayedPackages.length}</strong>{' '}
+                  dari <strong className="text-slate-900">{filteredPackages.length}</strong> paket
+                  CCTV
+                </div>
+                <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-teal-500 to-blue-600 rounded-full transition-all duration-300"
+                    style={{
+                      width: `${Math.min(
+                        100,
+                        Math.round((displayedPackages.length / filteredPackages.length) * 100)
+                      )}%`,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                {hasMorePackages && (
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-white hover:bg-teal-50 text-teal-700 border-2 border-teal-500 font-extrabold text-xs sm:text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all"
+                  >
+                    <span>
+                      Lihat Lainnya (+{Math.min(PAGE_SIZE, remainingPackagesCount)} Paket)
+                    </span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                )}
+
+                {visibleCount > PAGE_SIZE && (
+                  <button
+                    type="button"
+                    onClick={handleShowLess}
+                    className="inline-flex items-center gap-1.5 px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm active:scale-95 transition-all"
+                  >
+                    <span>Tampilkan Lebih Sedikit</span>
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* BOTTOM HELPER BANNER: BINGUNG PILIH PAKET? */}
