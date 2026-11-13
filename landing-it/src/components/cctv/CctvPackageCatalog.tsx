@@ -27,6 +27,7 @@ import {
   SeriesFilter,
   ChannelFilter,
 } from '@/lib/cctv-packages';
+import { getCctvPackages } from '@/lib/store';
 import { waLink } from '@/lib/business';
 
 interface CctvPackageCatalogProps {
@@ -35,7 +36,7 @@ interface CctvPackageCatalogProps {
 }
 
 const BRAND_OPTIONS: { value: BrandFilter; label: string; subtitle: string; badgeColor: string }[] = [
-  { value: 'Semua', label: 'Semua Brand', subtitle: '26 Pilihan Paket', badgeColor: 'bg-teal-500' },
+  { value: 'Semua', label: 'Semua Brand', subtitle: 'Pilihan Paket Lengkap', badgeColor: 'bg-teal-500' },
   { value: 'Hikvision', label: 'HIKVISION', subtitle: 'No.1 Global Brand', badgeColor: 'bg-rose-600' },
   { value: 'HiLook', label: 'HiLook', subtitle: 'Hemat by Hikvision', badgeColor: 'bg-orange-500' },
   { value: 'Dahua', label: 'DAHUA', subtitle: 'WizSense & Cooper', badgeColor: 'bg-sky-600' },
@@ -75,11 +76,50 @@ export default function CctvPackageCatalog({
   onSelectPackage,
   onOpenCustomSurvey,
 }: CctvPackageCatalogProps) {
+  const [packages, setPackages] = useState<CctvCatalogPackage[]>(CCTV_CATALOG_PACKAGES);
   const [selectedBrand, setSelectedBrand] = useState<BrandFilter>('Semua');
   const [selectedType, setSelectedType] = useState<CameraTypeFilter>('Semua');
   const [selectedSeries, setSelectedSeries] = useState<SeriesFilter>('Semua');
   const [selectedChannel, setSelectedChannel] = useState<ChannelFilter>('Semua');
   const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+
+  // Ambil data dinamis dari Supabase saat komponen dimuat
+  useEffect(() => {
+    getCctvPackages().then((data) => {
+      if (data && data.length > 0) {
+        // Konversi format database (snake_case) ke format CctvCatalogPackage (camelCase)
+        const mapped: CctvCatalogPackage[] = data
+          .filter((p) => p.is_active !== false)
+          .map((p) => ({
+            id: p.id,
+            name: p.name,
+            brand: (p.brand as any) || 'Hikvision',
+            brandTagline: p.brand_tagline || '',
+            type: (p.type as any) || 'CCTV Analog',
+            series: (p.series as any) || 'Standard',
+            seriesLabel: p.series_label || '',
+            resolution: p.resolution || '2MP Full HD',
+            cameraCount: (p.camera_count as any) || 4,
+            indoorCount: p.indoor_count || 0,
+            outdoorCount: p.outdoor_count || 0,
+            hddSize: p.hdd_size || '1TB',
+            cableLength: p.cable_length || '60 Meter',
+            recorderSpec: p.recorder_spec || '',
+            price: p.price,
+            estimatedCost: p.estimated_cost || 0,
+            originalPrice: p.original_price || undefined,
+            tag: p.tag || undefined,
+            popular: p.popular || false,
+            bestFor: p.best_for || '',
+            description: p.description || '',
+            features: Array.isArray(p.features) ? p.features : [],
+          }));
+        setPackages(mapped);
+      }
+    }).catch((err) => {
+      console.warn('Gagal memuat paket dari Supabase, menggunakan data default:', err);
+    });
+  }, []);
 
   // Reset visible count back to 8 whenever any filter changes
   useEffect(() => {
@@ -87,14 +127,14 @@ export default function CctvPackageCatalog({
   }, [selectedBrand, selectedType, selectedSeries, selectedChannel]);
 
   const filteredPackages = useMemo(() => {
-    return CCTV_CATALOG_PACKAGES.filter((pkg) => {
+    return packages.filter((pkg) => {
       if (selectedBrand !== 'Semua' && pkg.brand !== selectedBrand) return false;
       if (selectedType !== 'Semua' && pkg.type !== selectedType) return false;
       if (selectedSeries !== 'Semua' && pkg.series !== selectedSeries) return false;
       if (selectedChannel !== 'Semua' && pkg.cameraCount !== selectedChannel) return false;
       return true;
     });
-  }, [selectedBrand, selectedType, selectedSeries, selectedChannel]);
+  }, [packages, selectedBrand, selectedType, selectedSeries, selectedChannel]);
 
   const displayedPackages = useMemo(() => {
     return filteredPackages.slice(0, visibleCount);
