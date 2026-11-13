@@ -129,3 +129,29 @@ export interface Portfolio {
   };
 }
 
+export interface CctvPackage {
+  id: string;
+  name: string;
+  brand: 'Hikvision' | 'HiLook' | 'Dahua' | 'EZVIZ / IMOU' | string;
+  brand_tagline?: string;
+  type: 'CCTV Analog' | 'CCTV IP Camera' | string;
+  series: 'Standard' | 'Audio' | 'ColorVu Audio' | string;
+  series_label?: string;
+  resolution: string;
+  camera_count: number;
+  indoor_count: number;
+  outdoor_count: number;
+  hdd_size: string;
+  cable_length: string;
+  recorder_spec: string;
+  price: string;
+  estimated_cost: number;
+  original_price?: string | null;
+  tag?: string | null;
+  popular?: boolean;
+  best_for?: string;
+  description: string;
+  features: string[];
+  sort_order?: number;
+  is_active?: boolean;
+}

@@ -1,4 +1,4 @@
-import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio } from './types';
+import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio, CctvPackage } from './types';
 import { BUSINESS } from './business';
 
 export async function getStoreAll(): Promise<{
@@ -8,6 +8,7 @@ export async function getStoreAll(): Promise<{
   orders: Order[];
   submissions: SellSubmission[];
   portfolios: Portfolio[];
+  cctv_packages: CctvPackage[];
 }> {
   try {
     const res = await fetch('/api/store?resource=all', { cache: 'no-store' });
@@ -35,7 +36,19 @@ export async function getStoreAll(): Promise<{
       orders: [],
       submissions: [],
       portfolios: [],
+      cctv_packages: [],
     };
+  }
+}
+
+export async function getCctvPackages(): Promise<CctvPackage[]> {
+  try {
+    const res = await fetch('/api/store?resource=cctv_packages', { cache: 'no-store' });
+    const json = await res.json();
+    return json.data || [];
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 }
 
@@ -123,4 +136,3 @@ export async function submitSellSubmission(submissionData: Partial<SellSubmissio
     return { success: false, error: err.message };
   }
 }
-
