@@ -39,9 +39,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/images/acuuy_cctv_mark.png', type: 'image/png' },
       { url: '/favicon.ico', sizes: 'any' },
     ],
+    apple: '/images/acuuy_cctv_mark.png',
   },
   alternates: {
     canonical: '/',
