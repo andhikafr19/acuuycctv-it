@@ -26,16 +26,27 @@ export default function Sidebar() {
   const menuItems = [
     { name: 'Ringkasan', href: '/', icon: LayoutDashboard },
     { name: 'Manajemen Order', href: '/orders', icon: ClipboardList },
-    { name: 'Portofolio CCTV', href: '/portfolios', icon: Camera },
+    { name: 'Katalog Paket CCTV', href: '/cctv-packages', icon: Camera },
+    { name: 'Portofolio CCTV', href: '/portfolios', icon: ShieldCheck },
     { name: 'Inventaris Laptop', href: '/laptops', icon: Laptop },
     { name: 'Pengajuan Jual', href: '/submissions', icon: Inbox },
     { name: 'Laporan & Ekspor', href: '/reports', icon: BarChart3 },
     { name: 'Pengaturan Toko & WA', href: '/settings', icon: Settings },
   ];
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'logout' }),
+      });
+    } catch (e) {
+      console.error(e);
+    }
     localStorage.removeItem('acuuy_admin_session');
     router.push('/login');
+    router.refresh();
   };
 
   return (
@@ -77,7 +88,7 @@ export default function Sidebar() {
       {/* Footer Bottom Controls */}
       <div className="p-4 border-t border-slate-800/80 space-y-2">
         <a
-          href="http://localhost:3000"
+          href={process.env.NEXT_PUBLIC_SITE_URL || 'https://acuuycctv.vercel.app'}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-800/70 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold transition-colors"

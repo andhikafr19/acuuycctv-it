@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   User,
   Phone,
+  Mail,
   MapPin,
   Clock,
   Wrench,
@@ -13,6 +14,9 @@ import {
   CheckCircle2,
   AlertCircle,
   ExternalLink,
+  Layers,
+  FileText,
+  Calendar,
 } from 'lucide-react';
 import { Order, OrderStatus, Technician } from '@/lib/types';
 import { updateOrderAction } from '@/lib/store';
@@ -31,16 +35,28 @@ export default function OrderDetailModal({
   onClose,
   onUpdated,
 }: OrderDetailModalProps) {
-  if (!order) return null;
-
-  const [status, setStatus] = useState<OrderStatus>(order.status);
-  const [techId, setTechId] = useState(order.technician_id || '');
-  const [estimatedCost, setEstimatedCost] = useState(order.estimated_cost || 0);
-  const [finalCost, setFinalCost] = useState(order.final_cost || 0);
-  const [adminNotes, setAdminNotes] = useState(order.admin_notes || '');
+  const [status, setStatus] = useState<OrderStatus>('baru');
+  const [techId, setTechId] = useState('');
+  const [estimatedCost, setEstimatedCost] = useState(0);
+  const [finalCost, setFinalCost] = useState(0);
+  const [adminNotes, setAdminNotes] = useState('');
   const [logNotes, setLogNotes] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+
+  useEffect(() => {
+    if (order) {
+      setStatus(order.status);
+      setTechId(order.technician_id || '');
+      setEstimatedCost(order.estimated_cost || 0);
+      setFinalCost(order.final_cost || 0);
+      setAdminNotes(order.admin_notes || '');
+      setLogNotes('');
+      setSaveSuccess(false);
+    }
+  }, [order]);
+
+  if (!order) return null;
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,16 +95,24 @@ export default function OrderDetailModal({
     adminNotes
   );
 
+  const details = order.specific_details || {};
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in">
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8 max-h-[90vh] flex flex-col">
         {/* Modal Header */}
-        <div className="bg-slate-900 text-white p-6 flex items-start justify-between">
+        <div className="bg-slate-900 text-white p-6 flex items-start justify-between shrink-0">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs uppercase font-bold text-teal-400">Order Management</span>
               <span className="px-2 py-0.5 rounded bg-teal-500/20 text-teal-300 text-[10px] font-bold uppercase">
-                {order.service_type}
+                {order.service_type === 'cctv'
+                  ? 'Instalasi CCTV'
+                  : order.service_type === 'servis_komputer'
+                  ? 'Servis Komputer / Laptop'
+                  : order.service_type === 'konsultasi_it'
+                  ? 'Konsultasi IT'
+                  : order.service_type}
               </span>
             </div>
             <h3 className="text-2xl font-black font-mono mt-1">{order.order_number}</h3>
@@ -106,7 +130,7 @@ export default function OrderDetailModal({
         </div>
 
         {/* Modal Form Content */}
-        <form onSubmit={handleSave} className="p-6 space-y-6">
+        <form onSubmit={handleSave} className="p-6 space-y-6 overflow-y-auto flex-1">
           {saveSuccess && (
             <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 flex items-center gap-2 animate-in fade-in">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
@@ -126,6 +150,12 @@ export default function OrderDetailModal({
                 <span>{order.customer_phone}</span>
               </div>
             </div>
+            {order.customer_email && (
+              <div className="flex items-center gap-2 text-slate-600">
+                <Mail className="w-3.5 h-3.5 text-slate-400" />
+                <span>{order.customer_email}</span>
+              </div>
+            )}
             <div className="flex items-start gap-2">
               <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
               <span>
@@ -133,10 +163,81 @@ export default function OrderDetailModal({
               </span>
             </div>
             <div className="pt-2 border-t border-slate-200/60">
-              <span className="font-bold text-slate-900">Keluhan / Kebutuhan:</span>
+              <span className="font-bold text-slate-900">Keluhan / Deskripsi:</span>
               <p className="text-slate-600 mt-0.5">{order.description}</p>
             </div>
           </div>
+
+          {/* Specific Order Details dari Landing Page */}
+          {Object.keys(details).length > 0 && (
+            <div className="bg-teal-50/60 rounded-2xl p-4 border border-teal-200/60 text-xs text-slate-800 space-y-2">
+              <div className="flex items-center gap-1.5 font-bold text-teal-900 mb-1">
+                <Layers className="w-4 h-4 text-teal-700" />
+                <span>Rincian Paket & Spesifikasi (Dari Web):</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                {details.selected_package && (
+                  <div>
+                    <span className="text-slate-500 block">Paket CCTV Dipilih:</span>
+                    <strong className="text-slate-900">{details.selected_package}</strong>
+                  </div>
+                )}
+                {details.package_price && (
+                  <div>
+                    <span className="text-slate-500 block">Harga Paket Tertera:</span>
+                    <strong className="text-teal-700">{details.package_price}</strong>
+                  </div>
+                )}
+                {details.camera_count !== undefined && (
+                  <div>
+                    <span className="text-slate-500 block">Jumlah Kamera:</span>
+                    <strong className="text-slate-900">{details.camera_count} Kamera</strong>
+                  </div>
+                )}
+                {details.property_type && (
+                  <div>
+                    <span className="text-slate-500 block">Tipe Properti:</span>
+                    <strong className="text-slate-900">{details.property_type}</strong>
+                  </div>
+                )}
+                {details.device_brand && (
+                  <div>
+                    <span className="text-slate-500 block">Merk Perangkat:</span>
+                    <strong className="text-slate-900">{details.device_brand}</strong>
+                  </div>
+                )}
+                {details.topic && (
+                  <div>
+                    <span className="text-slate-500 block">Topik Konsultasi:</span>
+                    <strong className="text-slate-900">{details.topic}</strong>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Riwayat Status Log */}
+          {order.status_logs && order.status_logs.length > 0 && (
+            <div className="bg-slate-50/80 rounded-2xl p-3.5 border border-slate-200/80 text-xs">
+              <span className="font-bold text-slate-800 flex items-center gap-1.5 mb-2">
+                <Clock className="w-3.5 h-3.5 text-teal-600" /> Riwayat Status Pesanan:
+              </span>
+              <div className="space-y-1.5 max-h-32 overflow-y-auto">
+                {order.status_logs.map((log, idx) => (
+                  <div key={idx} className="flex items-start justify-between text-[11px] py-1 border-b border-slate-200/40 last:border-0">
+                    <div>
+                      <span className="font-bold uppercase text-teal-700">{log.status}</span>
+                      {log.notes && <span className="text-slate-600 ml-2">— {log.notes}</span>}
+                    </div>
+                    <span className="text-slate-400 shrink-0 ml-2">
+                      {new Date(log.time).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}{' '}
+                      {new Date(log.time).toLocaleDateString('id-ID')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Update Fields Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

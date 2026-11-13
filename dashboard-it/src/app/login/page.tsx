@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Logo from '@/components/layout/Logo';
-import { Lock, Mail, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,20 +12,29 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Demo admin check (matches .env.local.example)
-    if (
-      (email === 'admin@acuuycctv.com' && password === 'admincctvgarut') ||
-      (email === 'admin' && password === 'admin')
-    ) {
-      localStorage.setItem('acuuy_admin_session', 'logged_in');
-      router.push('/');
-    } else {
-      setError('Email atau kata sandi tidak sesuai. Gunakan akun demo di bawah.');
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        localStorage.setItem('acuuy_admin_session', 'logged_in');
+        router.push('/');
+        router.refresh();
+      } else {
+        setError(data.error || 'Email atau kata sandi tidak sesuai.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Gagal menghubungi server.');
+    } finally {
       setLoading(false);
     }
   };
@@ -39,7 +48,7 @@ export default function LoginPage() {
           </div>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">Login Dashboard Admin</h2>
           <p className="text-xs text-slate-500">
-            Masuk untuk mengelola operasional pesanan, stok laptop, dan notifikasi WhatsApp di Garut.
+            Masuk untuk mengelola operasional pesanan, paket CCTV, stok laptop, dan notifikasi WhatsApp di Garut.
           </p>
         </div>
 
@@ -81,7 +90,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs shadow-lg shadow-teal-700/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold text-xs shadow-lg shadow-teal-700/20 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? 'Memverifikasi...' : 'Masuk ke Dashboard'}
             <ArrowRight className="w-4 h-4" />

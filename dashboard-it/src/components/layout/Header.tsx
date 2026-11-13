@@ -22,6 +22,8 @@ export default function Header() {
         return 'Ringkasan Eksekutif & Operasional';
       case '/orders':
         return 'Manajemen Pesanan & Pengerjaan';
+      case '/cctv-packages':
+        return 'Katalog & Harga Paket CCTV Garut';
       case '/portfolios':
         return 'Manajemen Portofolio CCTV Garut';
       case '/laptops':

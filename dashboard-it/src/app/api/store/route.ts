@@ -1,241 +1,159 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import {
+  getSupabaseAdmin, pick, columns, fetchSettings, fetchTechnicians, fetchLaptops, fetchPortfolios,
+  fetchCctvPackages, fetchOrders, fetchSubmissions, fetchOrderByNumber, fetchOrderById, createOrder, createSubmission,
+} from '@/lib/supabase-server';
 
-function getStoreFilePath() {
-  const parentPath = path.resolve(process.cwd(), '..', 'shared-data', 'store.json');
-  if (fs.existsSync(parentPath)) return parentPath;
+export const dynamic = 'force-dynamic';
 
-  const currentPath = path.resolve(process.cwd(), 'shared-data', 'store.json');
-  if (fs.existsSync(currentPath)) return currentPath;
+const loaders: Record<string, () => Promise<any>> = {
+  settings: fetchSettings,
+  technicians: fetchTechnicians,
+  laptops: fetchLaptops,
+  portfolios: fetchPortfolios,
+  cctv_packages: fetchCctvPackages,
+  orders: fetchOrders,
+  submissions: fetchSubmissions,
+};
 
-  return parentPath;
-}
-
-function readStoreData() {
-  const filePath = getStoreFilePath();
-  try {
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf-8');
-      return JSON.parse(content);
-    }
-  } catch (error) {
-    console.error('Error reading store.json:', error);
-  }
-  return { settings: {}, technicians: [], laptops: [], orders: [], submissions: [], portfolios: [] };
-}
-
-function writeStoreData(data: any) {
-  const filePath = getStoreFilePath();
-  try {
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
-    return true;
-  } catch (error) {
-    console.error('Error writing store.json:', error);
-    return false;
-  }
-}
+const slugify = (s: string) =>
+  (s || 'item').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const resource = searchParams.get('resource') || 'all';
-  const orderNumber = searchParams.get('order_number');
-  const store = readStoreData();
+  try {
+    const { searchParams } = new URL(request.url);
+    const resource = searchParams.get('resource') || 'all';
+    const orderNumber = searchParams.get('order_number');
 
-  if (orderNumber) {
-    const order = store.orders.find(
-      (o: any) => o.order_number.trim().toLowerCase() === orderNumber.trim().toLowerCase()
-    );
-    if (!order) {
-      return NextResponse.json({ error: 'Pesanan tidak ditemukan' }, { status: 404 });
+    if (orderNumber) {
+      const order = await fetchOrderByNumber(orderNumber);
+      if (!order) return NextResponse.json({ error: 'Pesanan tidak ditemukan' }, { status: 404 });
+      return NextResponse.json({ data: order });
     }
-    return NextResponse.json({ data: order });
-  }
 
-  if (resource === 'all') {
-    return NextResponse.json({ data: store });
-  }
+    if (resource === 'all') {
+      const keys = Object.keys(loaders);
+      const values = await Promise.all(keys.map((k) => loaders[k]()));
+      return NextResponse.json({ data: Object.fromEntries(keys.map((k, i) => [k, values[i]])) });
+    }
 
-  if (resource in store) {
-    return NextResponse.json({ data: (store as any)[resource] });
+    if (loaders[resource]) return NextResponse.json({ data: await loaders[resource]() });
+    return NextResponse.json({ error: 'Resource tidak valid' }, { status: 400 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
-
-  return NextResponse.json({ error: 'Resource tidak valid' }, { status: 400 });
 }
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { action, data } = body;
-    const store = readStoreData();
+    const { action, data } = await request.json();
+    const sb = getSupabaseAdmin();
+    const now = new Date().toISOString();
 
-    if (action === 'create_order') {
-      const newOrder = {
-        id: 'ord-' + Date.now(),
-        order_number: data.order_number,
-        service_type: data.service_type,
-        customer_name: data.customer_name,
-        customer_phone: data.customer_phone,
-        customer_email: data.customer_email || '',
-        address: data.address,
-        city: data.city || store.settings.city || 'Garut',
-        description: data.description,
-        specific_details: data.specific_details || {},
-        photo_urls: data.photo_urls || [],
-        status: 'baru',
-        estimated_cost: Number(data.estimated_cost) || 0,
-        final_cost: 0,
-        technician_id: '',
-        technician_name: '',
-        admin_notes: '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        status_logs: [
-          {
-            status: 'baru',
-            time: new Date().toISOString(),
-            notes: 'Pemesanan jasa berhasil dibuat melalui website publik',
-          },
-        ],
-      };
+    switch (action) {
+      case 'create_order':
+        return NextResponse.json({ success: true, data: await createOrder(data) });
 
-      store.orders.unshift(newOrder);
-      writeStoreData(store);
-      return NextResponse.json({ success: true, data: newOrder });
-    }
+      case 'create_submission':
+        return NextResponse.json({ success: true, data: await createSubmission(data) });
 
-    if (action === 'create_submission') {
-      const newSub = {
-        id: 'sub-' + Date.now(),
-        submission_number: data.submission_number,
-        customer_name: data.customer_name,
-        customer_phone: data.customer_phone,
-        brand: data.brand,
-        model: data.model,
-        specifications: data.specifications,
-        condition_description: data.condition_description,
-        expected_price: Number(data.expected_price) || 0,
-        offered_price: 0,
-        status: 'menunggu_review',
-        admin_notes: '',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+      case 'update_order': {
+        const { data: prev, error: e1 } = await sb.from('orders').select('status').eq('id', data.id).maybeSingle();
+        if (e1) throw e1;
+        if (!prev) return NextResponse.json({ error: 'Order not found' }, { status: 404 });
 
-      store.submissions.unshift(newSub);
-      writeStoreData(store);
-      return NextResponse.json({ success: true, data: newSub });
-    }
+        const updates: any = { ...pick(data, columns.ORDER_COLUMNS), updated_at: now };
+        if ('technician_id' in updates && !updates.technician_id) updates.technician_id = null;
+        const { error } = await sb.from('orders').update(updates).eq('id', data.id);
+        if (error) throw error;
 
-    if (action === 'update_order') {
-      const index = store.orders.findIndex((o: any) => o.id === data.id);
-      if (index !== -1) {
-        const prev = store.orders[index];
-        const statusChanged = data.status && data.status !== prev.status;
-        const updatedLogs = [...(prev.status_logs || [])];
-        if (statusChanged) {
-          updatedLogs.push({
-            status: data.status,
-            time: new Date().toISOString(),
+        if (data.status && data.status !== prev.status) {
+          await sb.from('order_status_logs').insert({
+            order_id: data.id,
+            previous_status: prev.status,
+            new_status: data.status,
             notes: data.log_notes || `Status diubah menjadi ${data.status}`,
           });
         }
-
-        store.orders[index] = {
-          ...prev,
-          ...data,
-          status_logs: updatedLogs,
-          updated_at: new Date().toISOString(),
-        };
-        writeStoreData(store);
-        return NextResponse.json({ success: true, data: store.orders[index] });
+        return NextResponse.json({ success: true, data: await fetchOrderById(data.id) });
       }
-      return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-    }
 
-    if (action === 'save_laptop') {
-      if (data.id) {
-        const index = store.laptops.findIndex((l: any) => l.id === data.id);
-        if (index !== -1) {
-          store.laptops[index] = { ...store.laptops[index], ...data };
-        } else {
-          store.laptops.push(data);
+      case 'save_laptop': {
+        const payload: any = { ...pick(data, columns.LAPTOP_COLUMNS), updated_at: now };
+        if (!payload.slug) payload.slug = `${slugify(data.title)}-${Date.now().toString(36)}`;
+        const q = data.id
+          ? sb.from('laptops').update(payload).eq('id', data.id)
+          : sb.from('laptops').insert(payload);
+        const { error } = await q;
+        if (error) throw error;
+        return NextResponse.json({ success: true });
+      }
+
+      case 'delete_laptop': {
+        const { error } = await sb.from('laptops').delete().eq('id', data.id);
+        if (error) throw error;
+        return NextResponse.json({ success: true });
+      }
+
+      case 'update_settings': {
+        const { data: row, error } = await sb
+          .from('store_settings')
+          .upsert({ id: 'default', ...pick(data, columns.SETTINGS_COLUMNS), updated_at: now })
+          .select('*').single();
+        if (error) throw error;
+        return NextResponse.json({ success: true, data: row });
+      }
+
+      case 'update_submission': {
+        const { data: row, error } = await sb
+          .from('sell_submissions')
+          .update({ ...pick(data, columns.SUBMISSION_COLUMNS), updated_at: now })
+          .eq('id', data.id).select('*').maybeSingle();
+        if (error) throw error;
+        if (!row) return NextResponse.json({ error: 'Submission not found' }, { status: 404 });
+        return NextResponse.json({ success: true, data: row });
+      }
+
+      case 'save_portfolio': {
+        const payload: any = { ...pick(data, columns.PORTFOLIO_COLUMNS), updated_at: now };
+        const q = data.id
+          ? sb.from('portfolios').update(payload).eq('id', data.id)
+          : sb.from('portfolios').insert(payload);
+        const { error } = await q;
+        if (error) throw error;
+        return NextResponse.json({ success: true });
+      }
+
+      case 'delete_portfolio': {
+        const { error } = await sb.from('portfolios').delete().eq('id', data.id);
+        if (error) throw error;
+        return NextResponse.json({ success: true });
+      }
+
+      case 'save_cctv_package': {
+        const payload: any = { ...pick(data, columns.CCTV_PACKAGE_COLUMNS), updated_at: now };
+        if (!payload.id) {
+          payload.id = `${slugify(payload.brand || 'cctv')}-${slugify(payload.name || 'paket')}-${Date.now().toString(36)}`;
         }
-      } else {
-        const newLaptop = {
-          ...data,
-          id: 'lap-' + Date.now(),
-          slug: (data.title || 'laptop')
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/(^-|-$)+/g, ''),
-        };
-        store.laptops.unshift(newLaptop);
+        const { data: existing } = await sb.from('cctv_packages').select('id').eq('id', payload.id).maybeSingle();
+        const q = existing
+          ? sb.from('cctv_packages').update(payload).eq('id', payload.id)
+          : sb.from('cctv_packages').insert(payload);
+        const { error } = await q;
+        if (error) throw error;
+        return NextResponse.json({ success: true, id: payload.id });
       }
-      writeStoreData(store);
-      return NextResponse.json({ success: true });
-    }
 
-    if (action === 'delete_laptop') {
-      store.laptops = store.laptops.filter((l: any) => l.id !== data.id);
-      writeStoreData(store);
-      return NextResponse.json({ success: true });
-    }
-
-    if (action === 'update_settings') {
-      store.settings = { ...store.settings, ...data };
-      writeStoreData(store);
-      return NextResponse.json({ success: true, data: store.settings });
-    }
-
-    if (action === 'update_submission') {
-      const index = store.submissions.findIndex((s: any) => s.id === data.id);
-      if (index !== -1) {
-        store.submissions[index] = {
-          ...store.submissions[index],
-          ...data,
-          updated_at: new Date().toISOString(),
-        };
-        writeStoreData(store);
-        return NextResponse.json({ success: true, data: store.submissions[index] });
+      case 'delete_cctv_package': {
+        const { error } = await sb.from('cctv_packages').delete().eq('id', data.id);
+        if (error) throw error;
+        return NextResponse.json({ success: true });
       }
-      return NextResponse.json({ error: 'Submission not found' }, { status: 404 });
-    }
 
-    if (action === 'save_portfolio') {
-      if (!store.portfolios) store.portfolios = [];
-      if (data.id) {
-        const index = store.portfolios.findIndex((p: any) => p.id === data.id);
-        if (index !== -1) {
-          store.portfolios[index] = { ...store.portfolios[index], ...data };
-        } else {
-          store.portfolios.push(data);
-        }
-      } else {
-        const newPort = {
-          ...data,
-          id: 'port-' + Date.now(),
-        };
-        store.portfolios.unshift(newPort);
-      }
-      writeStoreData(store);
-      return NextResponse.json({ success: true });
+      default:
+        return NextResponse.json({ error: 'Action not supported' }, { status: 400 });
     }
-
-    if (action === 'delete_portfolio') {
-      if (store.portfolios) {
-        store.portfolios = store.portfolios.filter((p: any) => p.id !== data.id);
-        writeStoreData(store);
-      }
-      return NextResponse.json({ success: true });
-    }
-
-    return NextResponse.json({ error: 'Action not supported' }, { status: 400 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
-import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio } from './types';
+import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio, CctvPackage } from './types';
+import { BUSINESS } from './business';
 
 export async function getDashboardData(): Promise<{
   settings: StoreSettings;
@@ -7,34 +8,70 @@ export async function getDashboardData(): Promise<{
   orders: Order[];
   submissions: SellSubmission[];
   portfolios: Portfolio[];
+  cctv_packages: CctvPackage[];
 }> {
   try {
     const res = await fetch('/api/store?resource=all', { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch dashboard data');
     const json = await res.json();
-    return json.data;
+    return {
+      settings: json.data?.settings || {},
+      technicians: json.data?.technicians || [],
+      laptops: json.data?.laptops || [],
+      orders: json.data?.orders || [],
+      submissions: json.data?.submissions || [],
+      portfolios: json.data?.portfolios || [],
+      cctv_packages: json.data?.cctv_packages || [],
+    };
   } catch (err) {
     console.error(err);
     return {
       settings: {
         id: 'default',
         store_name: 'Acuuy CCTV & Komputer Garut',
-        tagline: 'Pusat CCTV & Servis Laptop Garut',
-        whatsapp_number: '6285158722545',
+        tagline: 'Pusat Instalasi CCTV, Servis Komputer & Jual Beli Laptop Bekas Bergaransi di Garut',
+        whatsapp_number: BUSINESS.phone,
         email: 'admin@acuuycctv.com',
-        address_street: 'Jl. Dayeuhandap No.35, Kota Kulon, Kec. Garut Kota',
-        city: 'Garut',
-        province: 'Jawa Barat',
-        postal_code: '44112',
-        google_maps_url: 'https://maps.google.com/?q=Garut',
-        opening_hours: 'Senin - Sabtu: 08:30 - 18:00 WIB',
+        address_street: BUSINESS.streetAddress + ', Kec. ' + BUSINESS.district,
+        city: BUSINESS.city,
+        province: BUSINESS.province,
+        postal_code: BUSINESS.postalCode,
+        google_maps_url: BUSINESS.mapsUrl,
+        opening_hours: BUSINESS.openingHours,
       },
       technicians: [],
       laptops: [],
       orders: [],
       submissions: [],
       portfolios: [],
+      cctv_packages: [],
     };
+  }
+}
+
+export async function saveCctvPackageAction(data: Partial<CctvPackage>): Promise<{ success: boolean; id?: string; error?: string }> {
+  try {
+    const res = await fetch('/api/store', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save_cctv_package', data }),
+    });
+    return await res.json();
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function deleteCctvPackageAction(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch('/api/store', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete_cctv_package', data: { id } }),
+    });
+    return await res.json();
+  } catch (err: any) {
+    return { success: false, error: err.message };
   }
 }
 
