@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -13,6 +13,8 @@ import {
   Smartphone,
 } from 'lucide-react';
 import BookingModal from '@/components/booking/BookingModal';
+import { getCctvPackages } from '@/lib/store';
+import { CctvPackage } from '@/lib/types';
 
 interface PopularPackage {
   id: string;
@@ -30,7 +32,7 @@ interface PopularPackage {
   accent: string;
 }
 
-const popularPackages: PopularPackage[] = [
+const DEFAULT_POPULAR_PACKAGES: PopularPackage[] = [
   {
     id: 'hilook-4-analog',
     brand: 'HiLook',
@@ -109,9 +111,79 @@ const popularPackages: PopularPackage[] = [
   },
 ];
 
+function getBrandAccent(brand: string): string {
+  const normalized = brand.toLowerCase();
+  if (normalized.includes('hilook')) return 'from-red-500 to-rose-600';
+  if (normalized.includes('dahua')) return 'from-sky-500 to-blue-600';
+  if (normalized.includes('ezviz') || normalized.includes('imou')) return 'from-emerald-500 to-teal-600';
+  return 'from-teal-400 to-emerald-500';
+}
+
+function mapDbPackagesToPopular(data: CctvPackage[]): PopularPackage[] {
+  const active = data.filter((p) => p.is_active !== false);
+  if (active.length === 0) return DEFAULT_POPULAR_PACKAGES;
+
+  const popularOnes = active.filter((p) => p.popular);
+  const selected = (popularOnes.length > 0 ? popularOnes : active).slice(0, 3);
+  const highlightedIndex = selected.length === 3 ? 1 : 0;
+  const multipleMarkedPopular = selected.filter((p) => p.popular).length > 1;
+
+  return selected.map((p, idx) => {
+    const isIp = p.type?.toLowerCase().includes('ip');
+    const resolutionShort = p.resolution ? p.resolution.split(' ')[0] : '';
+    const thirdHighlight =
+      p.series === 'ColorVu Audio'
+        ? { icon: Smartphone, label: 'ColorVu + Audio' }
+        : p.series === 'Audio'
+          ? { icon: Smartphone, label: 'Audio Built-in' }
+          : isIp
+            ? { icon: ShieldCheck, label: 'Smart Detect' }
+            : { icon: Smartphone, label: 'Pantau di HP' };
+
+    return {
+      id: p.id,
+      brand: p.brand || 'Hikvision',
+      brandTagline: p.brand_tagline || p.series_label || '',
+      name: p.name,
+      tag: p.tag || (p.popular ? 'Paling Populer' : p.series || 'Paket Lengkap'),
+      type: isIp ? 'IP Camera' : 'Analog',
+      price: p.price,
+      priceNote: 'Sudah termasuk jasa pasang',
+      description: p.description || p.best_for || '',
+      highlights: [
+        {
+          icon: Camera,
+          label: `${p.camera_count || 4} ${isIp ? 'IP Cam' : 'Kamera'}${resolutionShort ? ` ${resolutionShort}` : ''}`,
+        },
+        { icon: HardDrive, label: `HDD ${p.hdd_size || '1TB'}` },
+        thirdHighlight,
+      ],
+      features: Array.isArray(p.features) ? p.features : [],
+      popular:
+        popularOnes.length === 0 || multipleMarkedPopular
+          ? idx === highlightedIndex
+          : Boolean(p.popular),
+      accent: getBrandAccent(p.brand || ''),
+    };
+  });
+}
+
 export default function PopularPackagesSection() {
+  const [packages, setPackages] = useState<PopularPackage[]>(DEFAULT_POPULAR_PACKAGES);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPkg, setSelectedPkg] = useState<PopularPackage | null>(null);
+
+  useEffect(() => {
+    getCctvPackages()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setPackages(mapDbPackagesToPopular(data));
+        }
+      })
+      .catch((err) => {
+        console.warn('Gagal memuat paket populer dari Supabase, menggunakan data default:', err);
+      });
+  }, []);
 
   const handleChoose = (pkg: PopularPackage) => {
     setSelectedPkg(pkg);
@@ -134,7 +206,7 @@ export default function PopularPackagesSection() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-        {popularPackages.map((pkg) => (
+        {packages.map((pkg) => (
           <div
             key={pkg.id}
             className={`relative rounded-3xl flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
