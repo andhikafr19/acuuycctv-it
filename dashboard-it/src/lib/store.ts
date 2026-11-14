@@ -1,4 +1,4 @@
-import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio, CctvPackage } from './types';
+import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio, CctvPackage, Certificate } from './types';
 import { BUSINESS } from './business';
 
 export async function getDashboardData(): Promise<{
@@ -9,6 +9,7 @@ export async function getDashboardData(): Promise<{
   submissions: SellSubmission[];
   portfolios: Portfolio[];
   cctv_packages: CctvPackage[];
+  certificates: Certificate[];
 }> {
   try {
     const res = await fetch('/api/store?resource=all', { cache: 'no-store' });
@@ -22,6 +23,7 @@ export async function getDashboardData(): Promise<{
       submissions: json.data?.submissions || [],
       portfolios: json.data?.portfolios || [],
       cctv_packages: json.data?.cctv_packages || [],
+      certificates: json.data?.certificates || [],
     };
   } catch (err) {
     console.error(err);
@@ -45,6 +47,7 @@ export async function getDashboardData(): Promise<{
       submissions: [],
       portfolios: [],
       cctv_packages: [],
+      certificates: [],
     };
   }
 }
@@ -162,6 +165,46 @@ export async function updateSubmissionAction(id: string, updates: Partial<SellSu
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'update_submission', data: { id, ...updates } }),
+    });
+    return await res.json();
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function saveCertificateAction(data: Partial<Certificate>): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch('/api/store', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save_certificate', data }),
+    });
+    return await res.json();
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function deleteCertificateAction(id: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    const res = await fetch('/api/store', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete_certificate', data: { id } }),
+    });
+    return await res.json();
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function uploadCertificateImageAction(file: File): Promise<{ success: boolean; url?: string; error?: string }> {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
     });
     return await res.json();
   } catch (err: any) {

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import {
   getSupabaseAdmin, pick, columns, fetchSettings, fetchTechnicians, fetchLaptops, fetchPortfolios,
-  fetchCctvPackages, fetchOrders, fetchSubmissions, fetchOrderByNumber, fetchOrderById, createOrder, createSubmission,
+  fetchCctvPackages, fetchCertificates, fetchOrders, fetchSubmissions, fetchOrderByNumber, fetchOrderById, createOrder, createSubmission,
 } from '@/lib/supabase-server';
 
 export const dynamic = 'force-dynamic';
@@ -12,6 +12,7 @@ const loaders: Record<string, () => Promise<any>> = {
   laptops: fetchLaptops,
   portfolios: fetchPortfolios,
   cctv_packages: fetchCctvPackages,
+  certificates: fetchCertificates,
   orders: fetchOrders,
   submissions: fetchSubmissions,
 };
@@ -146,6 +147,22 @@ export async function POST(request: Request) {
 
       case 'delete_cctv_package': {
         const { error } = await sb.from('cctv_packages').delete().eq('id', data.id);
+        if (error) throw error;
+        return NextResponse.json({ success: true });
+      }
+
+      case 'save_certificate': {
+        const payload: any = { ...pick(data, columns.CERTIFICATE_COLUMNS), updated_at: now };
+        const q = data.id
+          ? sb.from('certificates').update(payload).eq('id', data.id)
+          : sb.from('certificates').insert(payload);
+        const { error } = await q;
+        if (error) throw error;
+        return NextResponse.json({ success: true });
+      }
+
+      case 'delete_certificate': {
+        const { error } = await sb.from('certificates').delete().eq('id', data.id);
         if (error) throw error;
         return NextResponse.json({ success: true });
       }

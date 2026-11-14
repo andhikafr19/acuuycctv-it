@@ -15,6 +15,7 @@ import {
   Camera,
   LogOut,
   ShieldCheck,
+  Award,
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -28,6 +29,7 @@ export default function Sidebar() {
     { name: 'Manajemen Order', href: '/orders', icon: ClipboardList },
     { name: 'Katalog Paket CCTV', href: '/cctv-packages', icon: Camera },
     { name: 'Portofolio CCTV', href: '/portfolios', icon: ShieldCheck },
+    { name: 'Lisensi & Sertifikat', href: '/certificates', icon: Award },
     { name: 'Inventaris Laptop', href: '/laptops', icon: Laptop },
     { name: 'Pengajuan Jual', href: '/submissions', icon: Inbox },
     { name: 'Laporan & Ekspor', href: '/reports', icon: BarChart3 },

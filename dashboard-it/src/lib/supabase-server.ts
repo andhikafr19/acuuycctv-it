@@ -46,6 +46,9 @@ const CCTV_PACKAGE_COLUMNS = [
   'price', 'estimated_cost', 'original_price', 'tag', 'popular', 'best_for', 'description',
   'features', 'sort_order', 'is_active',
 ];
+const CERTIFICATE_COLUMNS = [
+  'brand', 'title', 'tier', 'issuer', 'valid_period', 'image_url', 'sort_order', 'is_active',
+];
 
 export function pick(data: Record<string, any>, cols: string[]) {
   const out: Record<string, any> = {};
@@ -110,6 +113,23 @@ export async function fetchCctvPackages() {
     return num(data || [], ['estimated_cost', 'camera_count', 'indoor_count', 'outdoor_count', 'sort_order']);
   } catch (err) {
     console.warn('Error fetching cctv_packages:', err);
+    return [];
+  }
+}
+export async function fetchCertificates() {
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from('certificates')
+      .select('*')
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.warn('certificates table not yet migrated:', error.message);
+      return [];
+    }
+    return num(data || [], ['sort_order']);
+  } catch (err) {
+    console.warn('Error fetching certificates:', err);
     return [];
   }
 }
@@ -180,4 +200,5 @@ export const columns = {
   PORTFOLIO_COLUMNS,
   SETTINGS_COLUMNS,
   CCTV_PACKAGE_COLUMNS,
+  CERTIFICATE_COLUMNS,
 };
