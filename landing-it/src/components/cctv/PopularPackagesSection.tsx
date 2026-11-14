@@ -119,14 +119,43 @@ function getBrandAccent(brand: string): string {
   return 'from-teal-400 to-emerald-500';
 }
 
+function selectThreePackages(active: CctvPackage[]): {
+  selected: CctvPackage[];
+  highlightedIndex: number;
+} {
+  const popularOnes = active.filter((p) => p.popular);
+  const nonPopularOnes = active.filter((p) => !p.popular);
+
+  if (active.length < 3) {
+    const selected = [...popularOnes, ...nonPopularOnes].slice(0, active.length);
+    const popIdx = selected.findIndex((p) => p.popular);
+    return { selected, highlightedIndex: popIdx >= 0 ? popIdx : 0 };
+  }
+
+  if (popularOnes.length === 1) {
+    // Tempatkan satu-satunya paket populer di posisi tengah agar layout 3 kartu simetris
+    return {
+      selected: [nonPopularOnes[0], popularOnes[0], nonPopularOnes[1]],
+      highlightedIndex: 1,
+    };
+  }
+
+  if (popularOnes.length === 2) {
+    return {
+      selected: [popularOnes[0], popularOnes[1], nonPopularOnes[0]],
+      highlightedIndex: 1,
+    };
+  }
+
+  const selected = (popularOnes.length >= 3 ? popularOnes : active).slice(0, 3);
+  return { selected, highlightedIndex: 1 };
+}
+
 function mapDbPackagesToPopular(data: CctvPackage[]): PopularPackage[] {
   const active = data.filter((p) => p.is_active !== false);
   if (active.length === 0) return DEFAULT_POPULAR_PACKAGES;
 
-  const popularOnes = active.filter((p) => p.popular);
-  const selected = (popularOnes.length > 0 ? popularOnes : active).slice(0, 3);
-  const highlightedIndex = selected.length === 3 ? 1 : 0;
-  const multipleMarkedPopular = selected.filter((p) => p.popular).length > 1;
+  const { selected, highlightedIndex } = selectThreePackages(active);
 
   return selected.map((p, idx) => {
     const isIp = p.type?.toLowerCase().includes('ip');
@@ -159,10 +188,7 @@ function mapDbPackagesToPopular(data: CctvPackage[]): PopularPackage[] {
         thirdHighlight,
       ],
       features: Array.isArray(p.features) ? p.features : [],
-      popular:
-        popularOnes.length === 0 || multipleMarkedPopular
-          ? idx === highlightedIndex
-          : Boolean(p.popular),
+      popular: idx === highlightedIndex,
       accent: getBrandAccent(p.brand || ''),
     };
   });
