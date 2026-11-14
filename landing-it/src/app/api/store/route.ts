@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import {
-  fetchSettings, fetchTechnicians, fetchLaptops, fetchPortfolios, fetchCctvPackages, fetchOrderByNumber,
+  fetchSettings, fetchTechnicians, fetchLaptops, fetchPortfolios, fetchCctvPackages, fetchCertificates, fetchOrderByNumber,
   createOrder, createSubmission,
 } from '@/lib/supabase-server';
 
@@ -14,6 +14,7 @@ const loaders: Record<string, () => Promise<any>> = {
   laptops: fetchLaptops,
   portfolios: fetchPortfolios,
   cctv_packages: fetchCctvPackages,
+  certificates: fetchCertificates,
 };
 
 export async function GET(request: Request) {

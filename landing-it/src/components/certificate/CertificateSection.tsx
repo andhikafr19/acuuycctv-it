@@ -14,83 +14,13 @@ import {
   CheckCircle2,
   Move,
 } from 'lucide-react';
-import CertificateIllustration from './CertificateIllustration';
-
-export interface CertificateItem {
-  id: string;
-  brand: 'AVTECH' | 'DAHUA' | 'EZVIZ' | 'HIKVISION' | 'HILOOK' | 'IMOU';
-  title: string;
-  tier: string;
-  issuer: string;
-  validPeriod: string;
-  accentColor: string;
-  badgeBg: string;
-}
-
-const CERTIFICATES: CertificateItem[] = [
-  {
-    id: 'avtech',
-    brand: 'AVTECH',
-    title: 'Certificate of Distributor',
-    tier: 'Master Dealer Partner',
-    issuer: 'AVTECH Corporation',
-    validPeriod: '2025 – 2026',
-    accentColor: 'from-amber-600 to-yellow-600',
-    badgeBg: 'bg-amber-50 text-amber-800 border-amber-200',
-  },
-  {
-    id: 'dahua',
-    brand: 'DAHUA',
-    title: 'Authorized Platinum Direct Partner',
-    tier: 'Platinum Partner',
-    issuer: 'Dahua Vision Technology',
-    validPeriod: '2025 – 2026',
-    accentColor: 'from-blue-800 to-indigo-900',
-    badgeBg: 'bg-blue-50 text-blue-800 border-blue-200',
-  },
-  {
-    id: 'ezviz',
-    brand: 'EZVIZ',
-    title: 'EZVIZ Authorized Master Dealer',
-    tier: 'Master Dealer',
-    issuer: 'Hangzhou EZVIZ Network Co., Ltd.',
-    validPeriod: '2025 – 2026',
-    accentColor: 'from-sky-500 to-blue-600',
-    badgeBg: 'bg-sky-50 text-sky-800 border-sky-200',
-  },
-  {
-    id: 'hikvision',
-    brand: 'HIKVISION',
-    title: 'Hikvision Authorized Platinum Dealer',
-    tier: 'Platinum Dealer Partner',
-    issuer: 'Hikvision Digital Technology',
-    validPeriod: '2025 – 2026',
-    accentColor: 'from-red-600 to-rose-700',
-    badgeBg: 'bg-red-50 text-red-800 border-red-200',
-  },
-  {
-    id: 'hilook',
-    brand: 'HILOOK',
-    title: 'HiLook Authorized Dealer Partner',
-    tier: 'Authorized Dealer',
-    issuer: 'Hikvision Digital Technology',
-    validPeriod: '2025 – 2026',
-    accentColor: 'from-cyan-600 to-sky-700',
-    badgeBg: 'bg-cyan-50 text-cyan-800 border-cyan-200',
-  },
-  {
-    id: 'imou',
-    brand: 'IMOU',
-    title: 'Imou Authorized Reseller Indonesia',
-    tier: 'Authorized Reseller',
-    issuer: 'Huacheng Network Technology',
-    validPeriod: '2025 – 2026',
-    accentColor: 'from-orange-500 to-amber-600',
-    badgeBg: 'bg-orange-50 text-orange-800 border-orange-200',
-  },
-];
+import { Certificate } from '@/lib/types';
+import { getCertificates } from '@/lib/store';
 
 export default function CertificateSection() {
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -108,6 +38,26 @@ export default function CertificateSection() {
   const MAX_ZOOM = 3.25;
   const ZOOM_STEP = 0.25;
 
+  useEffect(() => {
+    let active = true;
+    getCertificates()
+      .then((data) => {
+        if (active) {
+          setCertificates(data || []);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setCertificates([]);
+          setLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const updateScrollState = useCallback(() => {
     const el = sliderRef.current;
     if (!el) return;
@@ -115,11 +65,13 @@ export default function CertificateSection() {
     setCanScrollLeft(scrollLeft > 8);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 8);
 
-    const maxScroll = Math.max(1, scrollWidth - clientWidth);
-    const progress = Math.min(1, Math.max(0, scrollLeft / maxScroll));
-    const idx = Math.round(progress * (CERTIFICATES.length - 1));
-    setActiveSlideIndex(idx);
-  }, []);
+    if (certificates.length > 0) {
+      const maxScroll = Math.max(1, scrollWidth - clientWidth);
+      const progress = Math.min(1, Math.max(0, scrollLeft / maxScroll));
+      const idx = Math.round(progress * Math.max(0, certificates.length - 1));
+      setActiveSlideIndex(idx);
+    }
+  }, [certificates.length]);
 
   useEffect(() => {
     const el = sliderRef.current;
@@ -131,7 +83,7 @@ export default function CertificateSection() {
       el.removeEventListener('scroll', updateScrollState);
       window.removeEventListener('resize', updateScrollState);
     };
-  }, [updateScrollState]);
+  }, [updateScrollState, certificates.length]);
 
   const scrollSlider = (direction: 'left' | 'right') => {
     const el = sliderRef.current;
@@ -153,7 +105,7 @@ export default function CertificateSection() {
 
   // Gentle auto-slide when not hovering or viewing modal
   useEffect(() => {
-    if (isPaused || selectedIndex !== null) return;
+    if (isPaused || selectedIndex !== null || certificates.length <= 1) return;
     const timer = setInterval(() => {
       const el = sliderRef.current;
       if (!el) return;
@@ -167,7 +119,7 @@ export default function CertificateSection() {
     }, 4500);
 
     return () => clearInterval(timer);
-  }, [isPaused, selectedIndex]);
+  }, [isPaused, selectedIndex, certificates.length]);
 
   // Reset zoom & pan when switching certificates or opening modal
   const resetTransform = useCallback(() => {
@@ -188,14 +140,15 @@ export default function CertificateSection() {
 
   const navigateModal = useCallback(
     (dir: 'prev' | 'next') => {
+      if (certificates.length === 0) return;
       setSelectedIndex((prev) => {
         if (prev === null) return null;
-        const total = CERTIFICATES.length;
+        const total = certificates.length;
         return dir === 'prev' ? (prev - 1 + total) % total : (prev + 1) % total;
       });
       resetTransform();
     },
-    [resetTransform]
+    [resetTransform, certificates.length]
   );
 
   const handleZoomIn = useCallback(() => {
@@ -279,7 +232,7 @@ export default function CertificateSection() {
     }
   };
 
-  const currentCertificate = selectedIndex !== null ? CERTIFICATES[selectedIndex] : null;
+  const currentCertificate = selectedIndex !== null ? certificates[selectedIndex] : null;
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -306,115 +259,151 @@ export default function CertificateSection() {
           </p>
         </div>
 
-        {/* Top Controls Bar (Navigation Arrows + Interactive Hint) */}
-        <div className="flex items-center justify-between mb-5 px-1">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => scrollSlider('left')}
-              aria-label="Geser ke kiri"
-              className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
-                canScrollLeft
-                  ? 'bg-white border-slate-300 text-slate-700 hover:bg-teal-600 hover:text-white hover:border-teal-600 shadow-sm'
-                  : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
-              }`}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollSlider('right')}
-              aria-label="Geser ke kanan"
-              className="w-9 h-9 rounded-full border bg-white border-slate-300 text-slate-700 hover:bg-teal-600 hover:text-white hover:border-teal-600 shadow-sm flex items-center justify-center transition-all"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 ml-2">
-              <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />6 Brand Ternama Terverifikasi
-            </span>
+        {loading ? (
+          <div className="flex gap-5 overflow-hidden pb-4 pt-1 px-1">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="shrink-0 w-[210px] sm:w-[220px] lg:w-[205px] xl:w-[210px] animate-pulse space-y-3"
+              >
+                <div className="w-full aspect-[5/7] rounded-2xl bg-slate-200/70" />
+                <div className="h-4 bg-slate-200/70 rounded w-1/2 mx-auto" />
+                <div className="h-3 bg-slate-200/60 rounded w-2/3 mx-auto" />
+              </div>
+            ))}
           </div>
-
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-teal-700 bg-teal-50/80 px-3 py-1.5 rounded-full border border-teal-200/70">
-            <ZoomIn className="w-3.5 h-3.5" />
-            <span>Klik gambar untuk Zoom</span>
+        ) : certificates.length === 0 ? (
+          <div className="py-12 px-4 text-center rounded-2xl border border-dashed border-slate-200 bg-white/70">
+            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center mx-auto mb-3">
+              <Award className="w-6 h-6" />
+            </div>
+            <p className="text-sm font-bold text-slate-800">
+              Belum ada sertifikat lisensi yang ditampilkan
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              Sertifikat kemitraan resmi akan muncul di sini setelah diunggah melalui dashboard admin.
+            </p>
           </div>
-        </div>
-
-        {/* Horizontal Sliding Track */}
-        <div
-          ref={sliderRef}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-          onTouchStart={() => setIsPaused(true)}
-          onTouchEnd={() => setIsPaused(false)}
-          className="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 pt-1 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {CERTIFICATES.map((cert, index) => (
-            <div
-              key={cert.id}
-              data-cert-card
-              onClick={() => openModal(index)}
-              className="group snap-start shrink-0 w-[210px] sm:w-[220px] lg:w-[205px] xl:w-[210px] cursor-pointer select-none flex flex-col items-center"
-            >
-              {/* Certificate Frame */}
-              <div className="relative w-full aspect-[5/7] rounded-2xl bg-white p-2.5 border border-slate-200/90 shadow-sm group-hover:shadow-xl group-hover:border-teal-500/60 group-hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
-                {/* Certificate Graphic */}
-                <div className="w-full h-full rounded-xl overflow-hidden border border-slate-100 relative bg-slate-50">
-                  <CertificateIllustration
-                    brand={cert.brand}
-                    className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-500"
-                  />
-                </div>
-
-                {/* Hover Glass Overlay with Zoom Icon */}
-                <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/35 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="px-3.5 py-2 rounded-xl bg-white/95 backdrop-blur-md text-slate-900 font-bold text-xs shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                    <ZoomIn className="w-4 h-4 text-teal-600" />
-                    <span>Perbesar</span>
-                  </div>
-                </div>
-
-                {/* Subtle Verified Corner Ribbon */}
-                <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-white/90 backdrop-blur shadow-sm border border-slate-200 flex items-center justify-center text-teal-600 opacity-90 group-hover:scale-110 transition-transform">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                </div>
+        ) : (
+          <>
+            {/* Top Controls Bar (Navigation Arrows + Interactive Hint) */}
+            <div className="flex items-center justify-between mb-5 px-1">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => scrollSlider('left')}
+                  aria-label="Geser ke kiri"
+                  className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all ${
+                    canScrollLeft
+                      ? 'bg-white border-slate-300 text-slate-700 hover:bg-teal-600 hover:text-white hover:border-teal-600 shadow-sm'
+                      : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                  }`}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollSlider('right')}
+                  aria-label="Geser ke kanan"
+                  className="w-9 h-9 rounded-full border bg-white border-slate-300 text-slate-700 hover:bg-teal-600 hover:text-white hover:border-teal-600 shadow-sm flex items-center justify-center transition-all"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 ml-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600" />
+                  {certificates.length} Brand Ternama Terverifikasi
+                </span>
               </div>
 
-              {/* Brand Label Below */}
-              <div className="mt-3.5 text-center">
-                <h3 className="text-sm sm:text-base font-extrabold tracking-wider text-slate-800 group-hover:text-teal-700 transition-colors uppercase">
-                  {cert.brand}
-                </h3>
-                <p className="text-[11px] font-medium text-slate-500 mt-0.5">{cert.tier}</p>
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-teal-700 bg-teal-50/80 px-3 py-1.5 rounded-full border border-teal-200/70">
+                <ZoomIn className="w-3.5 h-3.5" />
+                <span>Klik gambar untuk Zoom</span>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* Pagination Dots */}
-        <div className="flex items-center justify-center gap-2 mt-4">
-          {CERTIFICATES.map((cert, idx) => (
-            <button
-              key={cert.id}
-              type="button"
-              aria-label={`Lihat sertifikat ${cert.brand}`}
-              onClick={() => {
-                const el = sliderRef.current;
-                if (!el) return;
-                const cards = el.querySelectorAll('[data-cert-card]');
-                const target = cards[idx] as HTMLElement | undefined;
-                if (target) {
-                  el.scrollTo({ left: target.offsetLeft - 8, behavior: 'smooth' });
-                }
-              }}
-              className={`h-2 rounded-full transition-all ${
-                activeSlideIndex === idx
-                  ? 'w-7 bg-teal-600'
-                  : 'w-2 bg-slate-300 hover:bg-slate-400'
-              }`}
-            />
-          ))}
-        </div>
+            {/* Horizontal Sliding Track */}
+            <div
+              ref={sliderRef}
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+              onTouchStart={() => setIsPaused(true)}
+              onTouchEnd={() => setIsPaused(false)}
+              className="flex gap-5 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 pt-1 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {certificates.map((cert, index) => (
+                <div
+                  key={cert.id}
+                  data-cert-card
+                  onClick={() => openModal(index)}
+                  className="group snap-start shrink-0 w-[210px] sm:w-[220px] lg:w-[205px] xl:w-[210px] cursor-pointer select-none flex flex-col items-center"
+                >
+                  {/* Certificate Frame */}
+                  <div className="relative w-full aspect-[5/7] rounded-2xl bg-white p-2.5 border border-slate-200/90 shadow-sm group-hover:shadow-xl group-hover:border-teal-500/60 group-hover:-translate-y-1.5 transition-all duration-300 overflow-hidden">
+                    {/* Certificate Image */}
+                    <div className="w-full h-full rounded-xl overflow-hidden border border-slate-100 relative bg-slate-50">
+                      <img
+                        src={cert.image_url}
+                        alt={`${cert.brand} - ${cert.title}`}
+                        loading="lazy"
+                        className="w-full h-full object-contain group-hover:scale-[1.03] transition-transform duration-500"
+                      />
+                    </div>
+
+                    {/* Hover Glass Overlay with Zoom Icon */}
+                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/35 transition-colors duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <div className="px-3.5 py-2 rounded-xl bg-white/95 backdrop-blur-md text-slate-900 font-bold text-xs shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        <ZoomIn className="w-4 h-4 text-teal-600" />
+                        <span>Perbesar</span>
+                      </div>
+                    </div>
+
+                    {/* Subtle Verified Corner Ribbon */}
+                    <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-white/90 backdrop-blur shadow-sm border border-slate-200 flex items-center justify-center text-teal-600 opacity-90 group-hover:scale-110 transition-transform">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+
+                  {/* Brand Label Below */}
+                  <div className="mt-3.5 text-center">
+                    <h3 className="text-sm sm:text-base font-extrabold tracking-wider text-slate-800 group-hover:text-teal-700 transition-colors uppercase">
+                      {cert.brand}
+                    </h3>
+                    {cert.tier && (
+                      <p className="text-[11px] font-medium text-slate-500 mt-0.5">{cert.tier}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination Dots */}
+            {certificates.length > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-4">
+                {certificates.map((cert, idx) => (
+                  <button
+                    key={cert.id}
+                    type="button"
+                    aria-label={`Lihat sertifikat ${cert.brand}`}
+                    onClick={() => {
+                      const el = sliderRef.current;
+                      if (!el) return;
+                      const cards = el.querySelectorAll('[data-cert-card]');
+                      const target = cards[idx] as HTMLElement | undefined;
+                      if (target) {
+                        el.scrollTo({ left: target.offsetLeft - 8, behavior: 'smooth' });
+                      }
+                    }}
+                    className={`h-2 rounded-full transition-all ${
+                      activeSlideIndex === idx
+                        ? 'w-7 bg-teal-600'
+                        : 'w-2 bg-slate-300 hover:bg-slate-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* =====================================================================
@@ -439,9 +428,18 @@ export default function CertificateSection() {
                 <h3 className="text-sm sm:text-base font-extrabold text-white leading-tight">
                   {currentCertificate.title}
                 </h3>
-                <p className="text-xs text-slate-400">
-                  {currentCertificate.issuer} • Berlaku {currentCertificate.validPeriod}
-                </p>
+                {(currentCertificate.issuer || currentCertificate.valid_period) && (
+                  <p className="text-xs text-slate-400">
+                    {[
+                      currentCertificate.issuer,
+                      currentCertificate.valid_period
+                        ? `Berlaku ${currentCertificate.valid_period}`
+                        : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' • ')}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -528,14 +526,16 @@ export default function CertificateSection() {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Previous Certificate Button */}
-            <button
-              type="button"
-              onClick={() => navigateModal('prev')}
-              aria-label="Sertifikat sebelumnya"
-              className="absolute left-3 sm:left-6 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-teal-500 text-white hover:text-slate-950 border border-white/15 shadow-xl flex items-center justify-center transition-all hover:scale-105"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
+            {certificates.length > 1 && (
+              <button
+                type="button"
+                onClick={() => navigateModal('prev')}
+                aria-label="Sertifikat sebelumnya"
+                className="absolute left-3 sm:left-6 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-teal-500 text-white hover:text-slate-950 border border-white/15 shadow-xl flex items-center justify-center transition-all hover:scale-105"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+            )}
 
             {/* Draggable & Zoomable Certificate Sheet */}
             <div
@@ -551,20 +551,27 @@ export default function CertificateSection() {
               }}
               className="w-[82vw] max-w-[440px] sm:max-w-[480px] aspect-[5/7] rounded-2xl bg-white p-2 sm:p-3 shadow-2xl border border-white/20"
             >
-              <div className="w-full h-full rounded-xl overflow-hidden">
-                <CertificateIllustration brand={currentCertificate.brand} />
+              <div className="w-full h-full rounded-xl overflow-hidden bg-slate-50">
+                <img
+                  src={currentCertificate.image_url}
+                  alt={`${currentCertificate.brand} - ${currentCertificate.title}`}
+                  draggable={false}
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
 
             {/* Next Certificate Button */}
-            <button
-              type="button"
-              onClick={() => navigateModal('next')}
-              aria-label="Sertifikat berikutnya"
-              className="absolute right-3 sm:right-6 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-teal-500 text-white hover:text-slate-950 border border-white/15 shadow-xl flex items-center justify-center transition-all hover:scale-105"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+            {certificates.length > 1 && (
+              <button
+                type="button"
+                onClick={() => navigateModal('next')}
+                aria-label="Sertifikat berikutnya"
+                className="absolute right-3 sm:right-6 z-20 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-teal-500 text-white hover:text-slate-950 border border-white/15 shadow-xl flex items-center justify-center transition-all hover:scale-105"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            )}
 
             {/* Floating Helper Pill */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-white/10 text-[11px] text-slate-300 flex items-center gap-2 pointer-events-none shadow-lg">
@@ -578,36 +585,37 @@ export default function CertificateSection() {
           </div>
 
           {/* Bottom Thumbnail Strip */}
-          <div
-            className="w-full px-4 py-3 bg-slate-900/85 border-t border-white/10 z-20"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="max-w-3xl mx-auto flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto py-1">
-              {CERTIFICATES.map((item, idx) => {
-                const isSelected = idx === selectedIndex;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedIndex(idx);
-                      resetTransform();
-                    }}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 border ${
-                      isSelected
-                        ? 'bg-teal-500 text-slate-950 border-teal-400 shadow-md shadow-teal-500/20 scale-105'
-                        : 'bg-slate-800/90 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
-                    }`}
-                  >
-                    <span>{item.brand}</span>
-                  </button>
-                );
-              })}
+          {certificates.length > 1 && (
+            <div
+              className="w-full px-4 py-3 bg-slate-900/85 border-t border-white/10 z-20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="max-w-3xl mx-auto flex items-center justify-center gap-2 sm:gap-3 overflow-x-auto py-1">
+                {certificates.map((item, idx) => {
+                  const isSelected = idx === selectedIndex;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedIndex(idx);
+                        resetTransform();
+                      }}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 border ${
+                        isSelected
+                          ? 'bg-teal-500 text-slate-950 border-teal-400 shadow-md shadow-teal-500/20 scale-105'
+                          : 'bg-slate-800/90 text-slate-300 border-slate-700 hover:bg-slate-700 hover:text-white'
+                      }`}
+                    >
+                      <span>{item.brand}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
     </section>
   );
 }
-

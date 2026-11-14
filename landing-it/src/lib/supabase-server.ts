@@ -113,6 +113,24 @@ export async function fetchCctvPackages() {
     return [];
   }
 }
+export async function fetchCertificates() {
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from('certificates')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.warn('certificates table not yet migrated:', error.message);
+      return [];
+    }
+    return num(data || [], ['sort_order']);
+  } catch (err) {
+    console.warn('Error fetching certificates:', err);
+    return [];
+  }
+}
 export async function fetchOrders() {
   const { data, error } = await getSupabaseAdmin().from('orders').select(ORDER_SELECT).order('created_at', { ascending: false });
   if (error) throw error;

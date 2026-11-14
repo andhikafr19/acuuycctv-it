@@ -1,4 +1,4 @@
-import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio, CctvPackage } from './types';
+import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio, CctvPackage, Certificate } from './types';
 import { BUSINESS } from './business';
 
 export async function getStoreAll(): Promise<{
@@ -9,6 +9,7 @@ export async function getStoreAll(): Promise<{
   submissions: SellSubmission[];
   portfolios: Portfolio[];
   cctv_packages: CctvPackage[];
+  certificates: Certificate[];
 }> {
   try {
     const res = await fetch('/api/store?resource=all', { cache: 'no-store' });
@@ -37,7 +38,19 @@ export async function getStoreAll(): Promise<{
       submissions: [],
       portfolios: [],
       cctv_packages: [],
+      certificates: [],
     };
+  }
+}
+
+export async function getCertificates(): Promise<Certificate[]> {
+  try {
+    const res = await fetch('/api/store?resource=certificates', { cache: 'no-store' });
+    const json = await res.json();
+    return json.data || [];
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 }
 

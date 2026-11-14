@@ -155,3 +155,17 @@ export interface CctvPackage {
   sort_order?: number;
   is_active?: boolean;
 }
+
+export interface Certificate {
+  id: string;
+  brand: string;
+  title: string;
+  tier: string;
+  issuer: string;
+  valid_period: string;
+  image_url: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
