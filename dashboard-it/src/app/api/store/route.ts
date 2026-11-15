@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { verifyRequestAuth, verifyCsrfOrigin } from '@/lib/auth';
 import {
   getSupabaseAdmin, pick, columns, fetchSettings, fetchTechnicians, fetchLaptops, fetchPortfolios,
   fetchCctvPackages, fetchCertificates, fetchOrders, fetchSubmissions, fetchOrderByNumber, fetchOrderById, createOrder, createSubmission,
@@ -22,6 +23,14 @@ const slugify = (s: string) =>
 
 export async function GET(request: Request) {
   try {
+    const auth = await verifyRequestAuth(request);
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Silakan login terlebih dahulu.' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const resource = searchParams.get('resource') || 'all';
     const orderNumber = searchParams.get('order_number');
@@ -47,6 +56,21 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    if (!verifyCsrfOrigin(request)) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: Origin tidak valid.' },
+        { status: 403 }
+      );
+    }
+
+    const auth = await verifyRequestAuth(request);
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized: Silakan login terlebih dahulu.' },
+        { status: 401 }
+      );
+    }
+
     const { action, data } = await request.json();
     const sb = getSupabaseAdmin();
     const now = new Date().toISOString();

@@ -8,7 +8,9 @@ interface LogoProps {
   showTagline?: boolean;
 }
 
-export default function Logo({ className = '', variant = 'auto', showTagline = false }: LogoProps) {
+export default function Logo({ className = '', variant = 'light', showTagline = false }: LogoProps) {
+  const isDarkText = variant === 'dark';
+
   return (
     <Link href="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
       {/* Official Acuuy CCTV emblem */}
@@ -21,9 +23,15 @@ export default function Logo({ className = '', variant = 'auto', showTagline = f
         className="h-10 w-auto object-contain group-hover:scale-105 transition-transform duration-300"
       />
 
-      <div className="flex flex-col">
+      <div className="flex flex-col text-left">
         <div className="flex items-center gap-1.5">
-          <span className="text-xl font-black italic tracking-tight font-sans text-white group-hover:text-teal-400 transition-colors">
+          <span
+            className={`text-xl font-black italic tracking-tight font-sans transition-colors ${
+              isDarkText
+                ? 'text-slate-900 group-hover:text-teal-600'
+                : 'text-white group-hover:text-teal-400'
+            }`}
+          >
             ACUUY
           </span>
           <span className="text-xl font-black italic tracking-tight text-[#2ec4b6]">
@@ -31,7 +39,11 @@ export default function Logo({ className = '', variant = 'auto', showTagline = f
           </span>
         </div>
         {showTagline && (
-          <span className="text-[10px] font-medium tracking-wider text-slate-400 uppercase -mt-0.5">
+          <span
+            className={`text-[10px] font-medium tracking-wider uppercase -mt-0.5 ${
+              isDarkText ? 'text-slate-500' : 'text-slate-400'
+            }`}
+          >
             Operations & Control
           </span>
         )}

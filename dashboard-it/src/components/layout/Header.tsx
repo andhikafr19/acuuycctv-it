@@ -11,10 +11,11 @@ export default function Header() {
   const [settings, setSettings] = useState<StoreSettings | null>(null);
 
   useEffect(() => {
+    if (pathname?.startsWith('/login')) return;
     getDashboardData().then((d) => setSettings(d.settings));
-  }, []);
+  }, [pathname]);
 
-  if (pathname === '/login') return null;
+  if (pathname?.startsWith('/login')) return null;
 
   const getTitle = () => {
     switch (pathname) {

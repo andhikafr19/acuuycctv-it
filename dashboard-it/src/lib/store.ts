@@ -1,6 +1,14 @@
 import { Order, Laptop, StoreSettings, SellSubmission, Technician, Portfolio, CctvPackage, Certificate } from './types';
 import { BUSINESS } from './business';
 
+async function authFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const res = await fetch(input, init);
+  if (res.status === 401 && typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+  }
+  return res;
+}
+
 export async function getDashboardData(): Promise<{
   settings: StoreSettings;
   technicians: Technician[];
@@ -12,7 +20,7 @@ export async function getDashboardData(): Promise<{
   certificates: Certificate[];
 }> {
   try {
-    const res = await fetch('/api/store?resource=all', { cache: 'no-store' });
+    const res = await authFetch('/api/store?resource=all', { cache: 'no-store' });
     if (!res.ok) throw new Error('Failed to fetch dashboard data');
     const json = await res.json();
     return {
@@ -54,7 +62,7 @@ export async function getDashboardData(): Promise<{
 
 export async function saveCctvPackageAction(data: Partial<CctvPackage>): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'save_cctv_package', data }),
@@ -67,7 +75,7 @@ export async function saveCctvPackageAction(data: Partial<CctvPackage>): Promise
 
 export async function deleteCctvPackageAction(id: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'delete_cctv_package', data: { id } }),
@@ -80,7 +88,7 @@ export async function deleteCctvPackageAction(id: string): Promise<{ success: bo
 
 export async function savePortfolioAction(data: Partial<Portfolio>): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'save_portfolio', data }),
@@ -93,7 +101,7 @@ export async function savePortfolioAction(data: Partial<Portfolio>): Promise<{ s
 
 export async function deletePortfolioAction(id: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'delete_portfolio', data: { id } }),
@@ -109,7 +117,7 @@ export async function updateOrderAction(
   updates: Partial<Order> & { log_notes?: string }
 ): Promise<{ success: boolean; data?: Order; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'update_order', data: { id, ...updates } }),
@@ -122,7 +130,7 @@ export async function updateOrderAction(
 
 export async function saveLaptopAction(laptopData: Partial<Laptop>): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'save_laptop', data: laptopData }),
@@ -135,7 +143,7 @@ export async function saveLaptopAction(laptopData: Partial<Laptop>): Promise<{ s
 
 export async function deleteLaptopAction(id: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'delete_laptop', data: { id } }),
@@ -148,7 +156,7 @@ export async function deleteLaptopAction(id: string): Promise<{ success: boolean
 
 export async function updateSettingsAction(settings: Partial<StoreSettings>): Promise<{ success: boolean; data?: StoreSettings; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'update_settings', data: settings }),
@@ -161,7 +169,7 @@ export async function updateSettingsAction(settings: Partial<StoreSettings>): Pr
 
 export async function updateSubmissionAction(id: string, updates: Partial<SellSubmission>): Promise<{ success: boolean; data?: SellSubmission; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'update_submission', data: { id, ...updates } }),
@@ -174,7 +182,7 @@ export async function updateSubmissionAction(id: string, updates: Partial<SellSu
 
 export async function saveCertificateAction(data: Partial<Certificate>): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'save_certificate', data }),
@@ -187,7 +195,7 @@ export async function saveCertificateAction(data: Partial<Certificate>): Promise
 
 export async function deleteCertificateAction(id: string): Promise<{ success: boolean; error?: string }> {
   try {
-    const res = await fetch('/api/store', {
+    const res = await authFetch('/api/store', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'delete_certificate', data: { id } }),
@@ -202,7 +210,7 @@ export async function uploadCertificateImageAction(file: File): Promise<{ succes
   try {
     const formData = new FormData();
     formData.append('file', file);
-    const res = await fetch('/api/upload', {
+    const res = await authFetch('/api/upload', {
       method: 'POST',
       body: formData,
     });

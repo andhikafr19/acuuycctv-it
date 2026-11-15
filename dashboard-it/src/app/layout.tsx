@@ -1,11 +1,14 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Sidebar from '@/components/layout/Sidebar';
-import Header from '@/components/layout/Header';
+import AppShell from '@/components/layout/AppShell';
 
 export const metadata: Metadata = {
   title: 'Dashboard Admin | Acuuy CCTV Garut',
   description: 'Sistem Operasional & Kontrol Manajemen Acuuy CCTV Garut',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
@@ -24,11 +27,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased bg-slate-100 text-slate-900 min-h-screen flex selection:bg-teal-500 selection:text-white">
-        <Sidebar />
-        <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-          <Header />
-          <main className="flex-1 p-6 md:p-8 overflow-y-auto">{children}</main>
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
