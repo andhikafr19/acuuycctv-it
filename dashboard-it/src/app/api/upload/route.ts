@@ -4,7 +4,10 @@ import { verifyRequestAuth, verifyCsrfOrigin } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-const BUCKET = 'certificates';
+const ALLOWED_BUCKETS: Record<string, string> = {
+  certificates: 'cert',
+  portfolios: 'port',
+};
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg',
@@ -68,6 +71,9 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get('file');
+    const rawBucket = String(formData.get('bucket') || 'certificates').trim().toLowerCase();
+    const bucket = rawBucket in ALLOWED_BUCKETS ? rawBucket : 'certificates';
+    const prefix = ALLOWED_BUCKETS[bucket];
 
     if (!file || !(file instanceof File)) {
       return NextResponse.json(
@@ -93,9 +99,9 @@ export async function POST(request: Request) {
     const sb = getSupabaseAdmin();
 
     // Pastikan bucket publik tersedia
-    const { error: bucketErr } = await sb.storage.getBucket(BUCKET);
+    const { error: bucketErr } = await sb.storage.getBucket(bucket);
     if (bucketErr) {
-      const { error: createErr } = await sb.storage.createBucket(BUCKET, {
+      const { error: createErr } = await sb.storage.createBucket(bucket, {
         public: true,
         fileSizeLimit: MAX_SIZE_BYTES,
       });
@@ -111,7 +117,7 @@ export async function POST(request: Request) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '')
       .slice(0, 40);
-    const filePath = `cert-${Date.now()}-${safeName || 'image'}.${ext || 'png'}`;
+    const filePath = `${prefix}-${Date.now()}-${safeName || 'image'}.${ext || 'png'}`;
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -124,7 +130,7 @@ export async function POST(request: Request) {
     }
 
     const { error: uploadErr } = await sb.storage
-      .from(BUCKET)
+      .from(bucket)
       .upload(filePath, buffer, {
         contentType: file.type,
         upsert: false,
@@ -134,7 +140,7 @@ export async function POST(request: Request) {
       throw uploadErr;
     }
 
-    const { data: publicUrlData } = sb.storage.from(BUCKET).getPublicUrl(filePath);
+    const { data: publicUrlData } = sb.storage.from(bucket).getPublicUrl(filePath);
 
     return NextResponse.json({
       success: true,

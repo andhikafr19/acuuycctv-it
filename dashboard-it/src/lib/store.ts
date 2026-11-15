@@ -210,6 +210,22 @@ export async function uploadCertificateImageAction(file: File): Promise<{ succes
   try {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('bucket', 'certificates');
+    const res = await authFetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    return await res.json();
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
+}
+
+export async function uploadPortfolioImageAction(file: File): Promise<{ success: boolean; url?: string; error?: string }> {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('bucket', 'portfolios');
     const res = await authFetch('/api/upload', {
       method: 'POST',
       body: formData,

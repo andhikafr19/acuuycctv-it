@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { X, Camera, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Camera, CheckCircle2, Upload, Loader2, Image as ImageIcon } from 'lucide-react';
 import { Portfolio } from '@/lib/types';
-import { savePortfolioAction } from '@/lib/store';
+import { savePortfolioAction, uploadPortfolioImageAction } from '@/lib/store';
 
 interface PortfolioModalProps {
   portfolio: Portfolio | null;
@@ -18,34 +18,82 @@ export default function PortfolioModal({
   onClose,
   onSaved,
 }: PortfolioModalProps) {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState<'rumah' | 'toko' | 'kantor' | 'gudang'>('toko');
+  const [location, setLocation] = useState('Tarogong Kidul, Garut');
+  const [cameraCount, setCameraCount] = useState(4);
+  const [cameraType, setCameraType] = useState('IP Camera 4MP ColorVu + Audio 24 Jam');
+  const [completionDate, setCompletionDate] = useState(
+    () => new Date().toISOString().split('T')[0]
+  );
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
+  const [clientName, setClientName] = useState('');
+  const [review, setReview] = useState('');
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setUploadError('');
+    if (portfolio) {
+      setTitle(portfolio.title || '');
+      setCategory(portfolio.category || 'toko');
+      setLocation(portfolio.location || 'Tarogong Kidul, Garut');
+      setCameraCount(portfolio.camera_count || 4);
+      setCameraType(portfolio.camera_type || 'IP Camera 4MP ColorVu + Audio 24 Jam');
+      setCompletionDate(portfolio.completion_date || new Date().toISOString().split('T')[0]);
+      setImageUrl(portfolio.images?.[0] || '');
+      setDescription(portfolio.description || '');
+      setClientName(portfolio.testimonial?.client_name || '');
+      setReview(portfolio.testimonial?.review || '');
+    } else {
+      setTitle('');
+      setCategory('toko');
+      setLocation('Tarogong Kidul, Garut');
+      setCameraCount(4);
+      setCameraType('IP Camera 4MP ColorVu + Audio 24 Jam');
+      setCompletionDate(new Date().toISOString().split('T')[0]);
+      setImageUrl('');
+      setDescription('');
+      setClientName('');
+      setReview('');
+    }
+  }, [portfolio, isOpen]);
+
   if (!isOpen) return null;
 
-  const [title, setTitle] = useState(portfolio?.title || '');
-  const [category, setCategory] = useState<'rumah' | 'toko' | 'kantor' | 'gudang'>(
-    portfolio?.category || 'toko'
-  );
-  const [location, setLocation] = useState(portfolio?.location || 'Tarogong Kidul, Garut');
-  const [cameraCount, setCameraCount] = useState(portfolio?.camera_count || 4);
-  const [cameraType, setCameraType] = useState(
-    portfolio?.camera_type || 'IP Camera 4MP ColorVu + Audio 24 Jam'
-  );
-  const [completionDate, setCompletionDate] = useState(
-    portfolio?.completion_date || new Date().toISOString().split('T')[0]
-  );
-  const [imageUrl, setImageUrl] = useState(
-    portfolio?.images?.[0] ||
-      'https://images.unsplash.com/photo-1557597774-9d273605dfa9?w=800&auto=format&fit=crop&q=80'
-  );
-  const [description, setDescription] = useState(portfolio?.description || '');
-  const [clientName, setClientName] = useState(portfolio?.testimonial?.client_name || '');
-  const [review, setReview] = useState(portfolio?.testimonial?.review || '');
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const [isSaving, setIsSaving] = useState(false);
+    setUploadError('');
+    setIsUploading(true);
+    const res = await uploadPortfolioImageAction(file);
+    setIsUploading(false);
+
+    if (res.success && res.url) {
+      setImageUrl(res.url);
+    } else {
+      setUploadError(res.error || 'Gagal mengunggah file foto.');
+    }
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !location || !cameraCount) {
       alert('Mohon lengkapi judul proyek, lokasi di Garut, dan jumlah kamera');
+      return;
+    }
+    if (!imageUrl.trim()) {
+      alert('Mohon upload foto hasil pemasangan terlebih dahulu.');
       return;
     }
 
@@ -58,7 +106,7 @@ export default function PortfolioModal({
       camera_count: Number(cameraCount),
       camera_type: cameraType,
       completion_date: completionDate,
-      images: [imageUrl],
+      images: [imageUrl.trim()],
       description,
       testimonial: clientName
         ? {
@@ -190,15 +238,78 @@ export default function PortfolioModal({
             />
           </div>
 
+          {/* Upload Foto Hasil Pasang */}
           <div>
-            <label className="block font-bold text-slate-700 mb-1">URL Foto Hasil Pasang</label>
-            <input
-              type="text"
-              placeholder="https://images.unsplash.com/..."
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 p-2.5 focus:ring-2 focus:ring-teal-500 focus:outline-none"
-            />
+            <label className="block font-bold text-slate-700 mb-2">
+              Foto Hasil Pemasangan <span className="text-rose-500">*</span>
+            </label>
+
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start">
+              {/* Preview Box */}
+              <div className="sm:col-span-5 aspect-[16/10] rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 flex items-center justify-center overflow-hidden relative">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt={title || 'Preview Foto Portofolio'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4 text-slate-400">
+                    <ImageIcon className="w-8 h-8 mx-auto mb-1.5 opacity-60" />
+                    <p className="font-semibold text-[11px]">Belum ada foto</p>
+                    <p className="text-[10px] mt-0.5">Rasio ideal landscape 16:10</p>
+                  </div>
+                )}
+
+                {isUploading && (
+                  <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[1px] flex flex-col items-center justify-center text-white gap-2">
+                    <Loader2 className="w-6 h-6 animate-spin text-teal-400" />
+                    <span className="text-[11px] font-bold">Mengunggah...</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Upload Controls */}
+              <div className="sm:col-span-7 space-y-2.5">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="portfolio-image-upload"
+                />
+                <label
+                  htmlFor="portfolio-image-upload"
+                  className={`flex flex-col items-center justify-center w-full p-4 rounded-2xl border-2 border-dashed transition-all cursor-pointer ${
+                    isUploading
+                      ? 'border-slate-200 bg-slate-50 pointer-events-none opacity-60'
+                      : 'border-teal-300 bg-teal-50/50 hover:bg-teal-50 hover:border-teal-500'
+                  }`}
+                >
+                  <Upload className="w-5 h-5 text-teal-600 mb-1.5" />
+                  <span className="font-extrabold text-slate-800 text-xs">
+                    {imageUrl ? 'Ganti Foto Pemasangan' : 'Pilih File Foto Pemasangan'}
+                  </span>
+                  <span className="text-[10px] text-slate-500 mt-0.5 text-center">
+                    Format: JPG, PNG, WEBP, GIF (Maks. 5 MB)
+                  </span>
+                </label>
+
+                {uploadError && (
+                  <p className="text-rose-600 font-semibold text-[11px] bg-rose-50 border border-rose-200 rounded-xl p-2.5">
+                    {uploadError}
+                  </p>
+                )}
+
+                {imageUrl && (
+                  <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-2 text-[11px]">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="truncate font-medium">Foto siap disimpan</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div>
@@ -243,10 +354,11 @@ export default function PortfolioModal({
             </button>
             <button
               type="submit"
-              disabled={isSaving}
-              className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold shadow-md active:scale-95 transition-all disabled:opacity-50"
+              disabled={isSaving || isUploading}
+              className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-extrabold shadow-md active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {isSaving ? 'Menyimpan...' : 'Simpan Portofolio'}
+              {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+              <span>{isSaving ? 'Menyimpan...' : 'Simpan Portofolio'}</span>
             </button>
           </div>
         </form>
