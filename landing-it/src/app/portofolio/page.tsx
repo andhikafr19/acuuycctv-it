@@ -37,6 +37,25 @@ export default function PortofolioPage() {
     });
   }, []);
 
+  // Handle body scroll locking and Escape key for Detail Modal
+  useEffect(() => {
+    if (selectedItem) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setSelectedItem(null);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = '';
+    }
+  }, [selectedItem]);
+
   const categories = [
     { id: 'all', label: 'Semua Proyek' },
     { id: 'toko', label: 'Toko, Kafe & Ruko' },
@@ -199,16 +218,26 @@ export default function PortofolioPage() {
 
       {/* Detail Modal */}
       {selectedItem && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in">
-          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+        <div
+          className="fixed inset-0 z-[100] overflow-y-auto bg-slate-950/75 backdrop-blur-sm flex items-start sm:items-center justify-center p-3 sm:p-6 animate-in fade-in duration-200"
+          onClick={() => setSelectedItem(null)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[90vh] overflow-y-auto flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
+              type="button"
               onClick={() => setSelectedItem(null)}
-              className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-colors"
+              aria-label="Tutup detail dokumentasi"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white shadow-lg backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95 border border-white/20"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="aspect-[16/10] bg-slate-100 relative">
+            <div className="aspect-[16/10] bg-slate-100 relative shrink-0">
               <img
                 src={selectedItem.images[0]}
                 alt={selectedItem.title}
