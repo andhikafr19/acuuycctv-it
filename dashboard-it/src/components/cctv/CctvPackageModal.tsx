@@ -375,7 +375,7 @@ export default function CctvPackageModal({
             </div>
           </div>
 
-          <div className="flex items-center gap-6 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+          <div className="flex flex-wrap items-center gap-4 p-3.5 rounded-2xl bg-teal-50/70 border border-teal-200">
             <label className="flex items-center gap-2 cursor-pointer font-bold text-slate-800">
               <input
                 type="checkbox"
@@ -396,7 +396,7 @@ export default function CctvPackageModal({
               <span>Aktif (Tampil di Publik)</span>
             </label>
 
-            <label className="flex items-center gap-2 cursor-pointer font-bold text-teal-800">
+            <label className="flex items-center gap-2 cursor-pointer font-bold text-teal-900 bg-white px-2.5 py-1.5 rounded-xl border border-teal-300 shadow-sm">
               <input
                 type="checkbox"
                 checked={sendMobileNotification}
