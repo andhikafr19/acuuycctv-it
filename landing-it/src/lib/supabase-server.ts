@@ -131,6 +131,24 @@ export async function fetchCertificates() {
     return [];
   }
 }
+export async function fetchAppNotifications() {
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from('app_notifications')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(30);
+    if (error) {
+      console.warn('app_notifications table not yet migrated:', error.message);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.warn('Error fetching app_notifications:', err);
+    return [];
+  }
+}
 export async function fetchOrders() {
   const { data, error } = await getSupabaseAdmin().from('orders').select(ORDER_SELECT).order('created_at', { ascending: false });
   if (error) throw error;
