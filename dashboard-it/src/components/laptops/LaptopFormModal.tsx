@@ -35,6 +35,7 @@ export default function LaptopFormModal({
   const [description, setDescription] = useState('');
   const [imagesText, setImagesText] = useState('');
   const [featuresText, setFeaturesText] = useState('');
+  const [sendMobileNotification, setSendMobileNotification] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -126,7 +127,8 @@ export default function LaptopFormModal({
       features: parsedFeatures.length > 0
         ? parsedFeatures
         : ['Lolos Uji Hardware 20 Titik', 'Keyboard & Port Berfungsi Normal', 'Siap Pakai'],
-    };
+      ...(sendMobileNotification ? { send_mobile_notification: true } : {}),
+    } as any;
 
     const res = await saveLaptopAction(data);
     setIsSaving(false);
@@ -380,6 +382,18 @@ export default function LaptopFormModal({
               placeholder="Tuliskan kelengkapan (unit, charger, tas), kondisi fisik, dan keunggulan unit..."
               className="w-full rounded-xl border border-slate-300 p-2.5 focus:ring-2 focus:ring-teal-500 focus:outline-none resize-none"
             />
+          </div>
+
+          <div className="p-3 rounded-2xl bg-teal-50/70 border border-teal-200 flex items-center justify-between">
+            <label className="flex items-center gap-2.5 cursor-pointer font-bold text-teal-900">
+              <input
+                type="checkbox"
+                checked={sendMobileNotification}
+                onChange={(e) => setSendMobileNotification(e.target.checked)}
+                className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+              />
+              <span>🔔 Kirim Notifikasi Stok Laptop Baru / Promo ke Aplikasi Mobile</span>
+            </label>
           </div>
 
           <div className="pt-2 flex justify-end gap-2.5 border-t border-slate-200">

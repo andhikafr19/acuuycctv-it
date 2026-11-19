@@ -169,3 +169,18 @@ export interface Certificate {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  body: string;
+  category: 'promo_cctv' | 'stok_laptop_baru' | 'info_toko' | string;
+  promo_label?: string;
+  image_url?: string | null;
+  target_type?: 'cctv_package' | 'laptop' | 'general' | string;
+  target_id?: string | null;
+  price_display?: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { verifyRequestAuth, verifyCsrfOrigin } from '@/lib/auth';
 import {
   getSupabaseAdmin, pick, columns, fetchSettings, fetchTechnicians, fetchLaptops, fetchPortfolios,
-  fetchCctvPackages, fetchCertificates, fetchOrders, fetchSubmissions, fetchOrderByNumber, fetchOrderById, createOrder, createSubmission,
+  fetchCctvPackages, fetchCertificates, fetchAppNotifications, fetchOrders, fetchSubmissions, fetchOrderByNumber, fetchOrderById, createOrder, createSubmission,
 } from '@/lib/supabase-server';
 
 export const dynamic = 'force-dynamic';
@@ -14,6 +14,7 @@ const loaders: Record<string, () => Promise<any>> = {
   portfolios: fetchPortfolios,
   cctv_packages: fetchCctvPackages,
   certificates: fetchCertificates,
+  app_notifications: fetchAppNotifications,
   orders: fetchOrders,
   submissions: fetchSubmissions,
 };
@@ -108,9 +109,31 @@ export async function POST(request: Request) {
         if (!payload.slug) payload.slug = `${slugify(data.title)}-${Date.now().toString(36)}`;
         const q = data.id
           ? sb.from('laptops').update(payload).eq('id', data.id)
-          : sb.from('laptops').insert(payload);
-        const { error } = await q;
+          : sb.from('laptops').insert(payload).select('id').single();
+        const { data: savedRow, error } = await q;
         if (error) throw error;
+        const targetId = data.id || savedRow?.id || payload.slug;
+
+        if (data.send_mobile_notification) {
+          const finalPrice = Number(data.discount_price || data.price) || 0;
+          const priceFormatted = `Rp ${finalPrice.toLocaleString('id-ID')}`;
+          try {
+            await sb.from('app_notifications').insert({
+              title: `🔥 Stok Baru: ${data.title}`,
+              body: `${data.processor || ''} • RAM ${data.ram || ''} • ${data.storage || ''} (${data.condition_grade || 'Grade A'}) — ${priceFormatted}`,
+              category: 'stok_laptop_baru',
+              promo_label: data.discount_price ? 'Promo Laptop' : 'Stok Baru Masuk',
+              image_url: Array.isArray(data.images) && data.images.length > 0 ? data.images[0] : null,
+              target_type: 'laptop',
+              target_id: String(targetId),
+              price_display: priceFormatted,
+              is_active: true,
+            });
+          } catch (e: any) {
+            console.warn('Skip app_notifications insert:', e.message);
+          }
+        }
+
         return NextResponse.json({ success: true });
       }
 
@@ -166,6 +189,24 @@ export async function POST(request: Request) {
           : sb.from('cctv_packages').insert(payload);
         const { error } = await q;
         if (error) throw error;
+
+        if (data.send_mobile_notification) {
+          try {
+            await sb.from('app_notifications').insert({
+              title: `🎉 Promo CCTV: ${payload.name}`,
+              body: `${payload.description || `Paket lengkap ${payload.camera_count || 4} kamera ${payload.brand} sudah termasuk instalasi rapi di Garut.`}`,
+              category: 'promo_cctv',
+              promo_label: payload.tag || 'Promo Paket CCTV',
+              target_type: 'cctv_package',
+              target_id: String(payload.id),
+              price_display: payload.price,
+              is_active: true,
+            });
+          } catch (e: any) {
+            console.warn('Skip app_notifications insert:', e.message);
+          }
+        }
+
         return NextResponse.json({ success: true, id: payload.id });
       }
 

@@ -49,6 +49,9 @@ const CCTV_PACKAGE_COLUMNS = [
 const CERTIFICATE_COLUMNS = [
   'brand', 'title', 'tier', 'issuer', 'valid_period', 'image_url', 'sort_order', 'is_active',
 ];
+const APP_NOTIFICATION_COLUMNS = [
+  'title', 'body', 'category', 'promo_label', 'image_url', 'target_type', 'target_id', 'price_display', 'is_active',
+];
 
 export function pick(data: Record<string, any>, cols: string[]) {
   const out: Record<string, any> = {};
@@ -133,6 +136,23 @@ export async function fetchCertificates() {
     return [];
   }
 }
+export async function fetchAppNotifications() {
+  try {
+    const { data, error } = await getSupabaseAdmin()
+      .from('app_notifications')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) {
+      console.warn('app_notifications table not yet migrated:', error.message);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.warn('Error fetching app_notifications:', err);
+    return [];
+  }
+}
 export async function fetchOrders() {
   const { data, error } = await getSupabaseAdmin().from('orders').select(ORDER_SELECT).order('created_at', { ascending: false });
   if (error) throw error;
@@ -201,4 +221,5 @@ export const columns = {
   SETTINGS_COLUMNS,
   CCTV_PACKAGE_COLUMNS,
   CERTIFICATE_COLUMNS,
+  APP_NOTIFICATION_COLUMNS,
 };

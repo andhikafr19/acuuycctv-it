@@ -41,6 +41,7 @@ export default function CctvPackageModal({
   const [featuresText, setFeaturesText] = useState('');
   const [sortOrder, setSortOrder] = useState<number>(100);
   const [isActive, setIsActive] = useState(true);
+  const [sendMobileNotification, setSendMobileNotification] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -137,7 +138,8 @@ export default function CctvPackageModal({
       features: parsedFeatures,
       sort_order: Number(sortOrder) || 100,
       is_active: isActive,
-    };
+      ...(sendMobileNotification ? { send_mobile_notification: true } : {}),
+    } as any;
 
     const res = await saveCctvPackageAction(payload);
     setIsSaving(false);
@@ -392,6 +394,16 @@ export default function CctvPackageModal({
                 className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
               />
               <span>Aktif (Tampil di Publik)</span>
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer font-bold text-teal-800">
+              <input
+                type="checkbox"
+                checked={sendMobileNotification}
+                onChange={(e) => setSendMobileNotification(e.target.checked)}
+                className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+              />
+              <span>🔔 Kirim Notifikasi Promo ke Aplikasi Mobile</span>
             </label>
           </div>
 
