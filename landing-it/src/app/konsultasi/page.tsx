@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import {
   HelpCircle,
   Network,
@@ -11,6 +12,10 @@ import {
   PhoneCall,
   ArrowRight,
   Sparkles,
+  Camera,
+  Wrench,
+  Laptop,
+  MapPin,
 } from 'lucide-react';
 import BookingModal from '@/components/booking/BookingModal';
 
@@ -135,6 +140,113 @@ export default function KonsultasiPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Internal Links to Core Services */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-slate-900 text-white p-6 sm:p-10 space-y-6">
+          <div className="max-w-2xl space-y-1.5">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight">
+              Layanan Lainnya dari Acuuy CCTV Garut
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300">
+              Selain konsultasi jaringan & infrastruktur IT, kami juga melayani pemasangan CCTV,
+              servis perangkat, hingga jual beli laptop bergaransi di Garut.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Link
+              href="/cctv"
+              className="group rounded-2xl bg-white/5 hover:bg-teal-500/15 border border-white/10 hover:border-teal-400/50 p-4 transition-all flex items-start gap-3"
+            >
+              <Camera className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-white group-hover:text-teal-300 flex items-center gap-1">
+                  Jasa Pasang & Instalasi CCTV Garut <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Paket 2–16 kamera HD/IP bergaransi & online di HP.
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/servis"
+              className="group rounded-2xl bg-white/5 hover:bg-teal-500/15 border border-white/10 hover:border-teal-400/50 p-4 transition-all flex items-start gap-3"
+            >
+              <Wrench className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-white group-hover:text-teal-300 flex items-center gap-1">
+                  Servis Laptop & Komputer Garut <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Perbaikan cepat, upgrade SSD/RAM, dan garansi jelas.
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/portofolio"
+              className="group rounded-2xl bg-white/5 hover:bg-teal-500/15 border border-white/10 hover:border-teal-400/50 p-4 transition-all flex items-start gap-3"
+            >
+              <CheckCircle2 className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-white group-hover:text-teal-300 flex items-center gap-1">
+                  Portofolio Pemasangan CCTV <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Dokumentasi proyek rumah, ruko, dan kantor di Garut.
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/katalog"
+              className="group rounded-2xl bg-white/5 hover:bg-teal-500/15 border border-white/10 hover:border-teal-400/50 p-4 transition-all flex items-start gap-3"
+            >
+              <Laptop className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-white group-hover:text-teal-300 flex items-center gap-1">
+                  Katalog Laptop Bekas Garut <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Unit siap pakai, lolos QC ketat, bergaransi toko.
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/jual-laptop"
+              className="group rounded-2xl bg-white/5 hover:bg-teal-500/15 border border-white/10 hover:border-teal-400/50 p-4 transition-all flex items-start gap-3"
+            >
+              <Building2 className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-white group-hover:text-teal-300 flex items-center gap-1">
+                  Jual / Trade-In Laptop Bekas <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Taksiran harga transparan & cair cepat di workshop.
+                </p>
+              </div>
+            </Link>
+
+            <Link
+              href="/kontak"
+              className="group rounded-2xl bg-white/5 hover:bg-teal-500/15 border border-white/10 hover:border-teal-400/50 p-4 transition-all flex items-start gap-3"
+            >
+              <MapPin className="w-5 h-5 text-teal-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-white group-hover:text-teal-300 flex items-center gap-1">
+                  Kontak & Lokasi Toko Garut <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Jl. Dayeuhandap No.35, Kota Kulon, Garut Kota.
+                </p>
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 

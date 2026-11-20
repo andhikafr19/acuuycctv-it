@@ -33,6 +33,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Beranda', href: '/' },
+    { name: 'Pasang CCTV', href: '/cctv' },
     {
       name: 'Layanan',
       dropdown: true,
@@ -55,11 +56,17 @@ export default function Navbar() {
           href: '/konsultasi',
           icon: HelpCircle,
         },
+        {
+          name: 'Jual / Trade-In Laptop',
+          desc: 'Jual laptop bekas atau tukar tambah di Garut',
+          href: '/jual-laptop',
+          icon: LaptopIcon,
+        },
       ],
     },
-    { name: 'Katalog Laptop Bekas', href: '/katalog' },
-    { name: 'Portofolio CCTV', href: '/portofolio' },
-    { name: 'Kontak & Lokasi', href: '/kontak' },
+    { name: 'Katalog Laptop', href: '/katalog' },
+    { name: 'Portofolio', href: '/portofolio' },
+    { name: 'Kontak', href: '/kontak' },
   ];
 
   const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
@@ -108,10 +115,13 @@ export default function Navbar() {
                     onMouseLeave={() => setServicesDropdown(false)}
                   >
                     <button
+                      type="button"
+                      onClick={() => setServicesDropdown((prev) => !prev)}
+                      aria-expanded={servicesDropdown}
                       className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                        pathname.startsWith('/cctv') ||
                         pathname.startsWith('/servis') ||
-                        pathname.startsWith('/konsultasi')
+                        pathname.startsWith('/konsultasi') ||
+                        pathname.startsWith('/jual-laptop')
                           ? 'text-teal-700 bg-teal-50'
                           : 'text-slate-700 hover:text-teal-700 hover:bg-slate-50'
                       }`}
@@ -124,8 +134,14 @@ export default function Navbar() {
                       />
                     </button>
 
-                    {servicesDropdown && (
-                      <div className="absolute left-0 top-full mt-1 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 p-2.5 space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div
+                      className={`absolute left-0 top-full pt-1 w-72 transition-all duration-200 ${
+                        servicesDropdown
+                          ? 'opacity-100 visible translate-y-0 pointer-events-auto'
+                          : 'opacity-0 invisible -translate-y-1 pointer-events-none'
+                      }`}
+                    >
+                      <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-2.5 space-y-1">
                         {link.items?.map((item, itemIdx) => {
                           const IconComp = item.icon;
                           return (
@@ -150,7 +166,7 @@ export default function Navbar() {
                           );
                         })}
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               }
