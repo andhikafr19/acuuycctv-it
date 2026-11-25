@@ -1,8 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { MotionConfig, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import {
+  Reveal,
+  Stagger,
+  StaggerItem,
+  ParallaxMedia,
+  ScrollProgressLine,
+  useParallax,
+  staggerContainer,
+  fadeUpItem,
+} from '@/components/motion/ScrollMotion';
 import {
   Camera,
   Wrench,
@@ -55,39 +66,88 @@ export default function HomePage() {
 
   const waNumber = settings ? formatWaPhone(settings.whatsapp_number) : BUSINESS.phone;
 
+  /* ---------------------------------------------------------------------------
+     Scroll / Parallax setup
+     --------------------------------------------------------------------------- */
+  const reduceMotion = useReducedMotion();
+  const heroRef = useRef<HTMLElement>(null);
+  const whyRef = useRef<HTMLElement>(null);
+  const stepsRef = useRef<HTMLDivElement>(null);
+
+  // Hero: lapisan bergerak dengan kecepatan berbeda saat hero discroll keluar
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const k = reduceMotion ? 0 : 1;
+  const heroBlobAY = useTransform(heroProgress, [0, 1], [0, 160 * k]);
+  const heroBlobBY = useTransform(heroProgress, [0, 1], [0, -110 * k]);
+  const heroTextY = useTransform(heroProgress, [0, 1], [0, 70 * k]);
+  const heroTextOpacity = useTransform(heroProgress, [0, 0.85], [1, reduceMotion ? 1 : 0.35]);
+  const heroCardY = useTransform(heroProgress, [0, 1], [0, 35 * k]);
+
+  // Section "Kenapa Pilih": latar dekoratif bergerak lambat
+  const whyBlobAY = useParallax(whyRef, 70);
+  const whyBlobBY = useParallax(whyRef, -50);
+  const whyGridY = useParallax(whyRef, 30);
+
+  const heroItem = fadeUpItem(22);
+
   return (
-    <div className="space-y-20 pb-20">
+    <MotionConfig reducedMotion="user">
+    <div className="space-y-20 pb-20 overflow-x-clip">
       {/* =========================================================================
           1. HERO SECTION
          ========================================================================= */}
-      <section className="relative pt-8 sm:pt-14 pb-16 overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white">
-        {/* Background Glowing Mesh Accents */}
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 -right-40 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+      <section
+        ref={heroRef}
+        className="relative pt-8 sm:pt-14 pb-16 overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white"
+      >
+        {/* Background Glowing Mesh Accents (parallax layers) */}
+        <motion.div
+          style={{ y: heroBlobAY }}
+          className="absolute -top-40 -left-40 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl pointer-events-none"
+        />
+        <motion.div
+          style={{ y: heroBlobBY }}
+          className="absolute top-1/2 -right-40 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"
+        />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Copy */}
-            <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/15 border border-teal-500/30 text-teal-300 text-xs font-bold tracking-wide">
+            <motion.div
+              className="lg:col-span-7 space-y-6"
+              style={{ y: heroTextY, opacity: heroTextOpacity }}
+              variants={staggerContainer(0.12, 0.1)}
+              initial="hidden"
+              animate="show"
+            >
+              <motion.div
+                variants={heroItem}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-500/15 border border-teal-500/30 text-teal-300 text-xs font-bold tracking-wide"
+              >
                 <Sparkles className="w-3.5 h-3.5" /> Solusi IT & CCTV Terlengkap di Garut
-              </div>
+              </motion.div>
 
-              <h1 className="text-3xl sm:text-5xl xl:text-6xl font-black tracking-tight leading-[1.15]">
+              <motion.h1
+                variants={heroItem}
+                className="text-3xl sm:text-5xl xl:text-6xl font-black tracking-tight leading-[1.15]"
+              >
                 Jasa Pasang CCTV Garut,{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-teal-300 to-emerald-400">
                   Rapi & Bergaransi.
                 </span>
-              </h1>
+              </motion.h1>
 
-              <p className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
+              <motion.p variants={heroItem} className="text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
                 Pusat layanan resmi <strong>Acuuy CCTV</strong> di Garut Kota. Melayani jasa
                 instalasi kamera CCTV untuk rumah, toko & kantor, servis komputer & laptop
                 bergaransi, jual-beli laptop bekas mulus, dan konsultasi jaringan IT kantor Anda.
-              </p>
+              </motion.p>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <motion.div variants={heroItem} className="flex flex-wrap items-center gap-3.5 pt-2">
                 <button
                   onClick={() => openBooking('cctv')}
                   className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 font-extrabold text-sm shadow-xl shadow-teal-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
@@ -103,12 +163,17 @@ export default function HomePage() {
                   <LaptopIcon className="w-4 h-4 text-teal-400" />
                   <span>Katalog Laptop Bekas</span>
                 </Link>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Right Card / Visual Grid */}
-            <div className="lg:col-span-5 relative">
-              <div className="relative mx-auto max-w-md bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 rounded-3xl border border-slate-700/80 shadow-2xl backdrop-blur-xl">
+            <motion.div className="lg:col-span-5 relative" style={{ y: heroCardY }}>
+              <motion.div
+                initial={{ opacity: 0, y: 32, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="relative mx-auto max-w-md bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 rounded-3xl border border-slate-700/80 shadow-2xl backdrop-blur-xl"
+              >
                 <div className="flex items-center justify-between pb-4 border-b border-slate-700/60">
                   <div className="flex items-center gap-2.5">
                     <div className="w-3 h-3 rounded-full bg-emerald-500 animate-ping"></div>
@@ -173,8 +238,8 @@ export default function HomePage() {
                     <p className="text-[10px] text-slate-400 font-medium">Respon Cepat CS</p>
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -183,7 +248,7 @@ export default function HomePage() {
           2. EDUKASI: PERBEDAAN CCTV ANALOG VS IP CAMERA (PANDUAN MEMILIH)
          ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-10">
+        <Reveal className="text-center max-w-3xl mx-auto mb-10">
           <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3.5 py-1.5 rounded-full border border-teal-200">
             <Scale className="w-3.5 h-3.5" /> Panduan Memilih CCTV
           </span>
@@ -193,22 +258,25 @@ export default function HomePage() {
           <p className="text-sm sm:text-base text-slate-600 mt-2">
             Pahami perbedaan mendasar cara kerja, fitur cerdas, dan efisiensi biaya agar Anda mendapatkan sistem keamanan yang paling pas dengan kebutuhan dan budget.
           </p>
-        </div>
+        </Reveal>
 
         {/* 2 Kartu Perbandingan Visual Utama */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Kartu CCTV Analog */}
-          <div className="relative overflow-hidden bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+          <Reveal direction="left" distance={40} className="h-full">
+          <div className="relative h-full overflow-hidden bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none" />
             <div>
               <div className="relative -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 h-48 sm:h-56 overflow-hidden bg-amber-50">
-                <Image
-                  src="/images/cctv-analog.jpg"
-                  alt="Kamera CCTV Analog dengan kabel koaksial dan perekam DVR"
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
+                <ParallaxMedia distance={22}>
+                  <Image
+                    src="/images/cctv-analog.jpg"
+                    alt="Kamera CCTV Analog dengan kabel koaksial dan perekam DVR"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </ParallaxMedia>
                 <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent" />
                 <span className="absolute top-4 left-4 text-[11px] font-black uppercase tracking-widest bg-white/90 backdrop-blur text-amber-800 px-3 py-1 rounded-full border border-amber-200 shadow-sm">
                   Analog
@@ -271,19 +339,23 @@ export default function HomePage() {
               </button>
             </div>
           </div>
+          </Reveal>
 
           {/* Kartu IP Camera */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-teal-900 via-teal-950 to-slate-950 text-white rounded-3xl p-6 sm:p-8 border border-teal-500/30 shadow-xl flex flex-col justify-between group">
+          <Reveal direction="right" distance={40} delay={0.1} className="h-full">
+          <div className="relative h-full overflow-hidden bg-gradient-to-br from-teal-900 via-teal-950 to-slate-950 text-white rounded-3xl p-6 sm:p-8 border border-teal-500/30 shadow-xl flex flex-col justify-between group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-teal-400/10 rounded-bl-full pointer-events-none" />
             <div>
               <div className="relative -mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 h-48 sm:h-56 overflow-hidden bg-teal-950">
-                <Image
-                  src="/images/ip-camera.jpg"
-                  alt="IP Camera dengan kabel LAN PoE dan perekam NVR"
-                  fill
-                  sizes="(min-width: 1024px) 50vw, 100vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
+                <ParallaxMedia distance={22}>
+                  <Image
+                    src="/images/ip-camera.jpg"
+                    alt="IP Camera dengan kabel LAN PoE dan perekam NVR"
+                    fill
+                    sizes="(min-width: 1024px) 50vw, 100vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </ParallaxMedia>
                 <div className="absolute inset-0 bg-gradient-to-t from-teal-950 via-teal-950/10 to-transparent" />
                 <span className="absolute top-4 left-4 text-[11px] font-black uppercase tracking-widest bg-teal-950/80 backdrop-blur text-teal-200 px-3 py-1 rounded-full border border-teal-400/40 shadow-sm">
                   IP / Digital
@@ -346,10 +418,12 @@ export default function HomePage() {
               </button>
             </div>
           </div>
+          </Reveal>
         </div>
 
         {/* Tabel Komparasi Detail */}
-        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden mb-8">
+        <Reveal className="mb-8" amount={0.1}>
+        <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
           <div className="p-5 sm:p-6 bg-slate-50/80 border-b border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
@@ -373,8 +447,14 @@ export default function HomePage() {
                   <th scope="col" className="py-3.5 px-4 sm:px-6 w-[37.5%] text-teal-900 bg-teal-50/50">IP Camera (Digital Network)</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                <tr className="hover:bg-slate-50/70 transition-colors">
+              <motion.tbody
+                className="divide-y divide-slate-100"
+                variants={staggerContainer(0.07, 0.15)}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.2 }}
+              >
+                <motion.tr variants={fadeUpItem(12)} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
                     <HardDrive className="w-4 h-4 text-slate-500" /> Perangkat Perekam
                   </td>
@@ -384,9 +464,9 @@ export default function HomePage() {
                   <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
                     <strong>NVR (Network Video Recorder)</strong> / Cloud / MicroSD
                   </td>
-                </tr>
+                </motion.tr>
 
-                <tr className="hover:bg-slate-50/70 transition-colors">
+                <motion.tr variants={fadeUpItem(12)} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
                     <Cable className="w-4 h-4 text-slate-500" /> Media Kabel
                   </td>
@@ -396,9 +476,9 @@ export default function HomePage() {
                   <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
                     Kabel UTP LAN (Cat5e / Cat6) atau nirkabel (Wi-Fi). <em>PoE support</em>
                   </td>
-                </tr>
+                </motion.tr>
 
-                <tr className="hover:bg-slate-50/70 transition-colors">
+                <motion.tr variants={fadeUpItem(12)} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
                     <Camera className="w-4 h-4 text-slate-500" /> Resolusi & Ketajaman
                   </td>
@@ -408,9 +488,9 @@ export default function HomePage() {
                   <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
                     Lebih luas: 2 MP hingga 8 MP (4K Ultra HD) atau lebih
                   </td>
-                </tr>
+                </motion.tr>
 
-                <tr className="hover:bg-slate-50/70 transition-colors">
+                <motion.tr variants={fadeUpItem(12)} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
                     <Cpu className="w-4 h-4 text-slate-500" /> Fitur Pintar & AI
                   </td>
@@ -420,9 +500,9 @@ export default function HomePage() {
                   <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
                     Kaya fitur: deteksi manusia/kendaraan, line crossing, face capture, 2-way audio
                   </td>
-                </tr>
+                </motion.tr>
 
-                <tr className="hover:bg-slate-50/70 transition-colors">
+                <motion.tr variants={fadeUpItem(12)} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
                     <Layers className="w-4 h-4 text-slate-500" /> Kemudahan Penambahan Titik
                   </td>
@@ -432,9 +512,9 @@ export default function HomePage() {
                   <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
                     Sangat fleksibel via switch jaringan lokal (LAN)
                   </td>
-                </tr>
+                </motion.tr>
 
-                <tr className="hover:bg-slate-50/70 transition-colors">
+                <motion.tr variants={fadeUpItem(12)} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
                     <Activity className="w-4 h-4 text-slate-500" /> Pemantauan Lewat HP
                   </td>
@@ -444,9 +524,9 @@ export default function HomePage() {
                   <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
                     Bisa dipantau via aplikasi HP / PC langsung per kamera atau via NVR
                   </td>
-                </tr>
+                </motion.tr>
 
-                <tr className="hover:bg-slate-50/70 transition-colors">
+                <motion.tr variants={fadeUpItem(12)} className="hover:bg-slate-50/70 transition-colors">
                   <td className="py-3.5 px-4 sm:px-6 font-bold text-slate-900 flex items-center gap-2">
                     <Zap className="w-4 h-4 text-slate-500" /> Biaya Investasi
                   </td>
@@ -456,13 +536,15 @@ export default function HomePage() {
                   <td className="py-3.5 px-4 sm:px-6 text-slate-900 bg-teal-50/30">
                     <span className="font-bold text-slate-800">Menengah ke Atas</span> (sebanding kualitas & fitur)
                   </td>
-                </tr>
-              </tbody>
+                </motion.tr>
+              </motion.tbody>
             </table>
           </div>
         </div>
+        </Reveal>
 
         {/* Banner Edukasi & Call to Action Konsultasi */}
+        <Reveal>
         <div className="bg-gradient-to-r from-teal-50 via-white to-teal-50 rounded-3xl p-6 sm:p-8 border border-teal-200 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 text-xs font-black text-teal-800 uppercase tracking-wider">
@@ -490,6 +572,7 @@ export default function HomePage() {
             </button>
           </div>
         </div>
+        </Reveal>
       </section>
 
       {/* =========================================================================
@@ -501,7 +584,7 @@ export default function HomePage() {
           2B. BUKTI PORTOFOLIO CCTV GARUT
          ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <Reveal className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <span className="text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
               Dokumentasi Hasil Pasang
@@ -521,22 +604,25 @@ export default function HomePage() {
             <span>Lihat Semua Portofolio</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
-        </div>
+        </Reveal>
 
         {portfolios.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {portfolios.map((item) => (
+              <StaggerItem key={item.id} className="h-full">
               <div
-                key={item.id}
-                className="bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
+                className="h-full bg-white rounded-3xl border border-slate-200/80 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between group"
               >
                 <div>
                   <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
-                    <img
-                      src={item.images[0]}
-                      alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    <ParallaxMedia distance={16}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.images[0]}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </ParallaxMedia>
                     <div className="absolute top-3 left-3">
                       <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-900/90 text-white uppercase">
                         {item.category}
@@ -573,8 +659,9 @@ export default function HomePage() {
                   </Link>
                 </div>
               </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
       </section>
 
@@ -586,10 +673,37 @@ export default function HomePage() {
       {/* =========================================================================
           4. KENAPA PILIH ACUUY CCTV GARUT
          ========================================================================= */}
-      <section className="bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section
+        ref={whyRef}
+        className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-white py-16"
+      >
+        {/* Parallax decorative layers */}
+        <motion.div
+          aria-hidden
+          style={{
+            y: whyGridY,
+            backgroundImage:
+              'linear-gradient(rgba(45,212,191,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(45,212,191,0.07) 1px, transparent 1px)',
+            backgroundSize: '44px 44px',
+            maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 75%)',
+          }}
+          className="absolute -inset-y-16 inset-x-0 pointer-events-none"
+        />
+        <motion.div
+          aria-hidden
+          style={{ y: whyBlobAY }}
+          className="absolute -top-32 -left-24 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl pointer-events-none"
+        />
+        <motion.div
+          aria-hidden
+          style={{ y: whyBlobBY }}
+          className="absolute -bottom-32 -right-24 w-96 h-96 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"
+        />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-5 space-y-4">
+            <Reveal direction="left" distance={32} className="lg:col-span-5 space-y-4">
               <span className="text-xs font-extrabold uppercase tracking-widest text-teal-400 bg-teal-500/10 px-3.5 py-1.5 rounded-full border border-teal-500/30">
                 Nilai & Kepercayaan
               </span>
@@ -611,10 +725,10 @@ export default function HomePage() {
                   <PhoneCall className="w-4 h-4" /> Hubungi CS Toko di Garut
                 </a>
               </div>
-            </div>
+            </Reveal>
 
-            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
+            <Stagger className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4" stagger={0.1}>
+              <StaggerItem className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
                 <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
                   <ShieldCheck className="w-5 h-5" />
                 </div>
@@ -623,9 +737,9 @@ export default function HomePage() {
                   Semua unit laptop bekas dan pengerjaan servis kami lindungi dengan garansi toko 1
                   bulan penuh demi kepuasan Anda.
                 </p>
-              </div>
+              </StaggerItem>
 
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
+              <StaggerItem className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
                 <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
                   <Activity className="w-5 h-5" />
                 </div>
@@ -634,9 +748,9 @@ export default function HomePage() {
                   Konsultasi, konfirmasi jadwal survei CCTV, hingga update pengerjaan servis langsung
                   dibantu admin kami melalui WhatsApp.
                 </p>
-              </div>
+              </StaggerItem>
 
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
+              <StaggerItem className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
                 <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
                   <MapPin className="w-5 h-5" />
                 </div>
@@ -645,9 +759,9 @@ export default function HomePage() {
                   Memiliki toko fisik resmi di Jl. Dayeuhandap No.35, Garut Kota. Mudah dikunjungi untuk cek unit
                   laptop langsung atau serah-terima perbaikan.
                 </p>
-              </div>
+              </StaggerItem>
 
-              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
+              <StaggerItem className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
                 <div className="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
                   <Users className="w-5 h-5" />
                 </div>
@@ -656,8 +770,8 @@ export default function HomePage() {
                   Dikerjakan oleh teknisi berpengalaman yang memberikan opsi solusi paling efisien
                   tanpa biaya tersembunyi.
                 </p>
-              </div>
-            </div>
+              </StaggerItem>
+            </Stagger>
           </div>
         </div>
       </section>
@@ -666,7 +780,7 @@ export default function HomePage() {
           5. HOW IT WORKS (ALUR MUDAH)
          ========================================================================= */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <Reveal className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
             Alur Pemesanan
           </span>
@@ -676,40 +790,54 @@ export default function HomePage() {
           <p className="text-xs sm:text-sm text-slate-600 mt-1">
             Proses pemesanan jasa maupun jual-beli laptop dibuat ringkas dan nyaman.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 text-center space-y-3 relative">
-            <div className="w-12 h-12 rounded-2xl bg-teal-600 text-white text-lg font-black flex items-center justify-center mx-auto shadow-md shadow-teal-600/30">
-              1
-            </div>
-            <h3 className="font-extrabold text-base text-slate-900">Pilih Layanan & Isi Formulir</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Tentukan layanan CCTV, Servis, Konsultasi, atau pilih unit laptop bekas yang Anda incar.
-            </p>
+        <div ref={stepsRef} className="relative md:pt-10">
+          {/* Timeline progress line (desktop/tablet) — terisi mengikuti scroll */}
+          <div aria-hidden className="hidden md:block absolute top-3 left-[16.67%] right-[16.67%] h-1 rounded-full bg-slate-200">
+            <ScrollProgressLine
+              target={stepsRef}
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-teal-500 to-emerald-400"
+            />
           </div>
+          {['16.67%', '50%', '83.33%'].map((left) => (
+            <span
+              key={left}
+              aria-hidden
+              style={{ left }}
+              className="hidden md:block absolute top-2 w-3 h-3 -translate-x-1/2 rounded-full bg-white border-2 border-teal-500 shadow-sm"
+            />
+          ))}
 
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 text-center space-y-3 relative">
-            <div className="w-12 h-12 rounded-2xl bg-teal-600 text-white text-lg font-black flex items-center justify-center mx-auto shadow-md shadow-teal-600/30">
-              2
-            </div>
-            <h3 className="font-extrabold text-base text-slate-900">Konfirmasi & Penjadwalan</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Dapatkan Nomor Order unik dan konfirmasi cepat via WhatsApp untuk penentuan jadwal
-              survei atau estimasi biaya.
-            </p>
-          </div>
-
-          <div className="bg-white rounded-3xl p-6 border border-slate-200 text-center space-y-3 relative">
-            <div className="w-12 h-12 rounded-2xl bg-teal-600 text-white text-lg font-black flex items-center justify-center mx-auto shadow-md shadow-teal-600/30">
-              3
-            </div>
-            <h3 className="font-extrabold text-base text-slate-900">Pengerjaan & Garansi</h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Teknisi mengerjakan sesuai standar terbaik, rapi, transparan, dan
-              nikmati garansi toko.
-            </p>
-          </div>
+          <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-8 relative" stagger={0.18}>
+            {[
+              {
+                n: 1,
+                title: 'Pilih Layanan & Isi Formulir',
+                desc: 'Tentukan layanan CCTV, Servis, Konsultasi, atau pilih unit laptop bekas yang Anda incar.',
+              },
+              {
+                n: 2,
+                title: 'Konfirmasi & Penjadwalan',
+                desc: 'Dapatkan Nomor Order unik dan konfirmasi cepat via WhatsApp untuk penentuan jadwal survei atau estimasi biaya.',
+              },
+              {
+                n: 3,
+                title: 'Pengerjaan & Garansi',
+                desc: 'Teknisi mengerjakan sesuai standar terbaik, rapi, transparan, dan nikmati garansi toko.',
+              },
+            ].map((step) => (
+              <StaggerItem key={step.n} className="h-full">
+                <div className="h-full bg-white rounded-3xl p-6 border border-slate-200 text-center space-y-3 relative hover:shadow-lg hover:border-teal-200 transition-all duration-300">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-600 text-white text-lg font-black flex items-center justify-center mx-auto shadow-md shadow-teal-600/30">
+                    {step.n}
+                  </div>
+                  <h3 className="font-extrabold text-base text-slate-900">{step.title}</h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">{step.desc}</p>
+                </div>
+              </StaggerItem>
+            ))}
+          </Stagger>
         </div>
       </section>
 
@@ -720,5 +848,6 @@ export default function HomePage() {
         defaultService={selectedService}
       />
     </div>
+    </MotionConfig>
   );
 }

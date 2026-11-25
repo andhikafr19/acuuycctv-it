@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Reveal, Stagger, StaggerItem } from '@/components/motion/ScrollMotion';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -218,7 +219,7 @@ export default function PopularPackagesSection() {
 
   return (
     <section id="paket-populer" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="text-center max-w-3xl mx-auto mb-10">
+      <Reveal className="text-center max-w-3xl mx-auto mb-10">
         <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3.5 py-1.5 rounded-full border border-teal-200">
           <Flame className="w-3.5 h-3.5" /> Paket Populer CCTV
         </span>
@@ -229,13 +230,13 @@ export default function PopularPackagesSection() {
           Paket lengkap dari brand resmi HiLook, Hikvision, dan Dahua. Harga sudah termasuk unit kamera,
           perekam, harddisk, kabel, dan jasa instalasi rapi. Tinggal terima beres!
         </p>
-      </div>
+      </Reveal>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+      <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch" stagger={0.14}>
         {packages.map((pkg) => (
+          <StaggerItem key={pkg.id} className="h-full" distance={32}>
           <div
-            key={pkg.id}
-            className={`relative rounded-3xl flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+            className={`relative h-full rounded-3xl flex flex-col justify-between overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
               pkg.popular
                 ? 'bg-gradient-to-b from-slate-900 to-teal-950 text-white shadow-2xl border-2 border-teal-500 md:scale-[1.03]'
                 : 'bg-white text-slate-900 border border-slate-200/80 shadow-sm hover:shadow-xl'
@@ -342,11 +343,12 @@ export default function PopularPackagesSection() {
               </button>
             </div>
           </div>
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
 
       {/* CTA: Paket lainnya */}
-      <div className="mt-10 flex flex-col items-center gap-2 text-center">
+      <Reveal className="mt-10 flex flex-col items-center gap-2 text-center" delay={0.1}>
         <Link
           href="/cctv#paket"
           className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-white hover:bg-teal-50 text-teal-700 border-2 border-teal-500 font-extrabold text-sm shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
@@ -358,7 +360,7 @@ export default function PopularPackagesSection() {
         <p className="text-xs text-slate-500">
           Tersedia paket 2, 8, hingga 16 kamera serta paket custom sesuai kebutuhan lokasi Anda.
         </p>
-      </div>
+      </Reveal>
 
       <BookingModal
         isOpen={modalOpen}

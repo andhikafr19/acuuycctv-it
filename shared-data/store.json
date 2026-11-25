@@ -151,6 +151,39 @@
   ],
   "orders": [
     {
+      "id": "ord-1794099804398",
+      "order_number": "ACY-CCTV-261108-229",
+      "service_type": "cctv",
+      "customer_name": "Andhika",
+      "customer_phone": "085797987872",
+      "customer_email": "",
+      "address": "Jalan percobaan",
+      "city": "Garut",
+      "description": "Pemesanan Paket Hikvision IP Camera 4 Kamera 4MP PoE (Rp 5.450.000) untuk Rumah Tinggal",
+      "specific_details": {
+        "selected_package": "Paket Hikvision IP Camera 4 Kamera 4MP PoE",
+        "package_price": "Rp 5.450.000",
+        "camera_count": 4,
+        "property_type": "Rumah Tinggal"
+      },
+      "photo_urls": [],
+      "status": "baru",
+      "estimated_cost": 5450000,
+      "final_cost": 0,
+      "technician_id": "",
+      "technician_name": "",
+      "admin_notes": "",
+      "created_at": "2026-11-08T01:03:24.398Z",
+      "updated_at": "2026-11-08T01:03:24.398Z",
+      "status_logs": [
+        {
+          "status": "baru",
+          "time": "2026-11-08T01:03:24.398Z",
+          "notes": "Pemesanan jasa berhasil dibuat melalui website publik"
+        }
+      ]
+    },
+    {
       "id": "ord-1",
       "order_number": "ACY-CCTV-260907-001",
       "service_type": "cctv",

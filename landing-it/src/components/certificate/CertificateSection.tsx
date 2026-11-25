@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Reveal } from '@/components/motion/ScrollMotion';
 import {
   Award,
   ChevronLeft,
@@ -246,7 +247,7 @@ export default function CertificateSection() {
         <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-8">
+        <Reveal className="text-center max-w-2xl mx-auto mb-8">
           <span className="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-widest text-teal-700 bg-teal-50 px-3.5 py-1.5 rounded-full border border-teal-200">
             <Award className="w-3.5 h-3.5" /> Lisensi &amp; Kemitraan Resmi
           </span>
@@ -257,7 +258,7 @@ export default function CertificateSection() {
             Bukti otorisasi distributor dan dealer resmi produk keamanan CCTV original bergaransi
             pabrikan. Klik pada sertifikat untuk memperbesar (<strong>Zoom In / Out</strong>).
           </p>
-        </div>
+        </Reveal>
 
         {loading ? (
           <div className="flex gap-5 overflow-hidden pb-4 pt-1 px-1">
